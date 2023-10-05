@@ -1,0 +1,205 @@
+/*.bc-img{*/
+/*    display: flex;*/
+/*    width: 100%;*/
+/*    height: 1000px;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+
+/*}*/
+/*.order-text{*/
+/*    display: flex;*/
+/*    font-size: 40px;*/
+/*    background-color: red;*/
+
+/*}*/
+
+/*body{*/
+/*    background:rgba(255, 255, 255, 0.1) url("/static/imgs/img_bg.png") no-repeat;*/
+
+/*    box-sizing: border-box;*/
+/*    width: 100%;*/
+/*    height: 1000px;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+
+/*}*/
+/*.box{*/
+/*    width: 660px;*/
+/*    height: 746px;*/
+
+/*    display: flex;*/
+/*    align-content: center;*/
+/*    align-items: center;*/
+/*    position: fixed;*/
+/*    justify-content: center;*/
+/*}*/
+body {
+
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background-image: url("/static/imgs/bc-img.jpg"); /* Путь к вашему изображению фона */
+    background-size: cover; /* Масштабирование фонового изображения на весь экран */
+    background-repeat: no-repeat; /* Запрет повторения фонового изображения */
+    background-attachment: fixed; /* Зафиксировать фон, чтобы он не прокручивался вместе с контентом */
+    background-position: center center; /* Центрирование фонового изображения */
+    background-color: lightblue; /* Фоновый цвет для случаев, когда изображение не загружено или не отображается */
+    height: 100vh; /* Высота на весь видимый экран */
+    width: 100%;
+    overflow-x: hidden; /* Запрет горизонтальной прокрутки, если контент слишком широкий */
+}
+.boxes{
+
+    /*height: 100%;*/
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+}
+.boxes a{
+    text-decoration: none;
+    text-underline: none;
+    color:inherit;
+}
+
+.box{
+    /*background-image: url("/static/imgs/bc-card2.jpg");*/
+    /*background-size: cover; !* Растягивает изображение, чтобы оно полностью покрыло фон карточки *!*/
+    /*background-repeat: no-repeat; !* Запрет повторения фонового изображения *!*/
+    /*background-position: center center; !* Центрирование фонового изображения *!*/
+
+
+    position: relative;
+    display: flex;
+    margin: 10px;
+    padding: 10px;
+    border: 2px solid red;
+    max-height: 100%;
+    width: 400px;
+
+    border-radius: 10px; /* Увеличил радиус закругления углов */
+    /*background-color: rgb(206, 170, 170);*/
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Добавил тень для карточек */
+    transition: transform 0.2s ease-in-out; /* Анимация при наведении курсора */
+
+}
+.box::before,
+.box::after {
+    content: ""; /* Обязательное свойство для псевдоэлементов */
+    position: absolute; /* Абсолютное позиционирование псевдоэлементов */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("/static/imgs/bc-card2.jpg"); /* Фоновое изображение для псевдоэлементов */
+    background-size: cover; /* Растягивает изображение, чтобы оно полностью покрыло псевдоэлемент */
+    background-repeat: no-repeat; /* Запрет повторения фонового изображения */
+    background-position: center center; /* Центрирование фонового изображения */
+    filter: brightness(90%) blur(5px); /* Применить размытие и уменьшить яркость только к фону */
+    z-index: -1; /* Поместить псевдоэлементы позади остального содержимого карточки */
+}
+.box:hover {
+    transform: translateY(-5px); /* Поднимаем карточку при наведении курсора */
+}
+
+.polis{
+    width: 100%;
+    flex-direction: column;
+    display: flex;
+    align-items:start;
+    height: max-content;
+
+
+
+    padding-right:20px;
+    padding-left: 20px;
+
+}
+
+.polis_number{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+
+
+}
+.polis_cost{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+}
+.polis_data{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.polis_drivers{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    width: 100%;
+}
+.polis_drivers p{
+    display: flex;
+}
+.polis_number,
+.polis_cost,
+.polis_data,
+.polis_ts,
+.polis_number_ts,
+.polis_drivers {
+
+    font-weight: bold;
+}
+#drivers{
+    font-weight: bold;
+}
+.driver_name{
+    padding-top: 10px;
+    font-weight: bold;
+}
+.driver_passport{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+.driver_id{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 360px;
+}
+.driver_id p{
+    margin-top: 0;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 100px;
+    width:100%; /* Вы можете настроить высоту по вашему желанию */
+}
+
+.centered-button {
+    padding: 10px 20px;
+    background-color: #3498db; /* Цвет фона кнопки */
+    color: #fff; /* Цвет текста кнопки */
+    border: none;
+    border-radius: 5px; /* Закругление углов */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Анимация при наведении курсора */
+}
+
+.centered-button:hover {
+    background-color: #2980b9; /* Цвет фона кнопки при наведении */
+}

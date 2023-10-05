@@ -1,0 +1,70 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Полис номер №{{data.order.polis_number}}{% endblock %}
+
+{% block content %}
+    <div class="boxes">
+        <div class="box">
+            <div class="polis">
+                <div class="polis_number">
+                    Номер полиса
+                    <span><p>{{data.order.polis_number }}</p></span>
+                </div>
+                <div class="polis_cost">
+                    Стоимость
+                    <span><p>{{ data.order.polis_cost }}</p></span>
+                </div>
+                <div class="polis_data">
+                    <p>Срок страхования<br></p>
+                    {{ data.order.polis_star }}
+                    <span><p>{{ data.order.polis_end }}</p></span>
+                </div>
+                <div class="polis_ts">
+                    <p>Транспортное средство:</p>
+                    <span>
+                        <p>
+                            {{ data.order.polis_ts }}
+                        </p>
+                    </span>
+                </div>
+                <div class="polis_number_ts">
+                    <p>Гос. номер:</p>
+                    <span>
+                        <p>
+                            {{ data.order.polis_number_ts }}
+                        </p>
+                    </span>
+                </div>
+                <p id="drivers">Водители:</p>
+
+                <div class="polis_drivers">
+
+                    <p>
+                            {% for driver in data.order.polis_drivers %}
+                                {{ forloop.counter }}. <br>
+                            {% endfor %}
+                    </p>
+                    <span>
+                        <p>
+                            {% for driver in data.order.polis_drivers %}
+                                {{ index }}{{ driver.name }}<br>
+                            {% endfor %}
+                        </p>
+                    </span>
+                </div>
+                <div class="button-container">
+                    <a href="{% url 'services' data.order.polis_number %}">
+                        <button class="centered-button">Подробнее</button>
+                    </a>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}

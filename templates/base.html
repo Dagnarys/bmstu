@@ -1,0 +1,40 @@
+<!doctype html>
+{% load static %}
+<html lang="en" class="h-100">
+<head>
+  <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/style.css' %}">
+</head>
+<body>
+
+    <form method="GET" action="{% url 'filter' %}">
+    <input type="text" name="filter_keyword" placeholder="Фильтр по ФИО или гос.номеру">
+    <select name="filter_field">
+        <option value="polis_number">Номер полиса</option>
+        <option value="polis_ts">Транспортное средство</option>
+        <option value="polis_number_ts">Гос. номер</option>
+        <option value="id_driver">ВУ водителя</option>
+    </select>
+    <button type="submit">Применить фильтр</button>
+    </form>
+    {% block content %}{% endblock %}
+{#    <div class="box">#}
+{#        <div class="order-text">#}
+{#            Hello BMSTU students!#}
+{##}
+{#            <form action="sendText" method="post" enctype="multipart/form-data">#}
+{#                {% csrf_token %}#}
+{#                <input name="text" type="text"><br>#}
+{#                <input type="submit" value="Submit">#}
+{#            </form>#}
+{#        </div>#}
+{#    </div>#}
+
+
+
+
+
+
+</body>
+</html>

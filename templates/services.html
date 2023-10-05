@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% for data in filtered_services %}
+            {{ data.polis_number }}
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    {% if filtered_services %}
+        <div class="boxes">
+            {% for data in filtered_services %}
+                        <div class="box">
+                            <div class="polis">
+                                <div class="polis_number">
+                                    Номер полиса
+                                    <span><p>{{data.polis_number }}</p></span>
+                                </div>
+                                <div class="polis_cost">
+                                    Стоимость
+                                    <span><p>{{data.polis_cost}}</p></span>
+                                </div>
+                                <div class="polis_data">
+                                    <p>Срок страхования<br></p>
+                                    {{data.polis_start}}
+                                    <span><p>{{data.polis_end}}</p></span>
+                                </div>
+                                <div class="polis_ts">
+                                    <p>Транспортное средство:</p>
+                                    <span>
+                                        <p>
+                                            {{data.polis_ts}}
+                                        </p>
+                                    </span>
+                                </div>
+                                <div class="polis_number_ts">
+                                    <p>Гос. номер:</p>
+                                    <span>
+                                        <p>
+                                            {{ data.polis_number_ts }}
+                                        </p>
+                                    </span>
+                                </div>
+                                <p id="drivers">Водители:</p>
+                                <div class="polis_drivers">
+                                    <div class ="pois_info">
+                                         {% for driver in data.polis_drivers %}
+                                             <div class="driver_name">
+                                                 {{ forloop.counter }}. {{ index }}{{ driver.name }}
+                                             </div>
+                                             <div class="driver_passport">
+                                                 <p>Паспорт {{ index }} {{ driver.passport }}</p>
+                                                 <p>Возраст{{ index }} {{ driver.age }}</p>
+                                             </div>
+                                             <div class="driver_id">
+                                                <p>Водительское удостоверение</p>
+                                                <p>{{ index }}{{ driver.id_driver }}</p>
+                                             </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <h3 style="color: #000">Нет результатов для отображения.</h3>
+    {% endif %}
+{% endblock %}
+

@@ -220,8 +220,6 @@ def services(request, polis_number):
         'filtered_services': [order]  # Передаем только один элемент, а не весь список
     })
 
-
-
 def filter(request):
     filter_keyword = request.GET.get('filter_keyword')
     filter_field = request.GET.get('filter_field')

@@ -103,80 +103,65 @@ body {
     transform: translateY(-5px); /* Поднимаем карточку при наведении курсора */
 }
 
-.polis{
+.driver_card{
     width: 100%;
     flex-direction: column;
     display: flex;
     align-items:start;
     height: max-content;
-
-
-
     padding-right:20px;
     padding-left: 20px;
 
 }
 
-.polis_number{
+.driver_number{
     flex-direction: row;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     width: 100%;
-
+    font-weight: bold;
 
 }
-.polis_cost{
-    flex-direction: row;
+.driver_name{
+    flex-direction: column;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     width: 100%;
-}
-.polis_data{
-    flex-direction: row;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.polis_drivers{
-    flex-direction: row;
-    display: flex;
-    align-items: baseline;
-    width: 100%;
-}
-.polis_drivers p{
-    display: flex;
-}
-.polis_number,
-.polis_cost,
-.polis_data,
-.polis_ts,
-.polis_number_ts,
-.polis_drivers {
-
     font-weight: bold;
 }
-#drivers{
+.driver_passport{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
     font-weight: bold;
 }
+
+.driver_age{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    font-weight: bold;
+}
+
+
 .driver_name{
     padding-top: 10px;
     font-weight: bold;
 }
-.driver_passport{
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-}
+
 .driver_id{
     flex-direction: row;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     width: 360px;
+    font-weight: bold;
 }
 .driver_id p{
     margin-top: 0;

@@ -22,10 +22,11 @@ from bmstu_lab import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('hello/', views.hello),
-    path('', views.GetOrders),
-    path('order/<int:polis_number>/', views.GetOrder, name='order_url'),
-    path('sendText', views.sendText, name='sendText'),
-    path('filter/', views.filter, name='filter'),
-    path('services/<int:polis_number>/', views.services, name='services'),
+    path('', views.GetDrivers),
+    # path('order/<int:driver_id>/', views.GetOrder, name='order_url'),
+    # path('sendText', views.sendText, name='sendText'),
+    # path('filter/', views.filter, name='filter'),
+    path('services/<int:driver_id>/', views.GetDriver, name='services'),
+    # path('services/', views.GetDriver, name='services'),
 
 ]

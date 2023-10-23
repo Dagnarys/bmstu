@@ -15,235 +15,103 @@ from django.shortcuts import get_object_or_404
 #     }})
 database = [
     {
-        "polis_number": 1,
-        "polis_cost": 1000,
-        "polis_start": "01.01.2024",
-        "polis_end": "01.01.2025",
-        "polis_ts": "Модель 1",
-        "polis_number_ts": "AB123CD",
-        "polis_drivers": [
-            {
-                "name": "Водитель 4",
-                "passport": "1234567890",
-                "id_driver": "AB123456",
-                "age": 30
-            },
-            {
-                "name": "Водитель 5",
-                "passport": "0987654321",
-                "id_driver": "CD789012",
-                "age": 25
-            }
-        ]
+        "driver_id": 1,
+        "driver_name": "Иванова Анна Александровна",
+        "driver_passport": 1234567890,
+        "driver_age": 18,
+        "driver_number": 9999999,
+
     },
     {
-        "polis_number": 2,
-        "polis_cost": 1500,
-        "polis_start": "02.01.2024",
-        "polis_end": "02.01.2025",
-        "polis_ts": "Модель 2",
-        "polis_number_ts": "XY456YZ",
-        "polis_drivers": [
-            {
-                "name": "Водитель 4",
-                "passport": "1234567890",
-                "id_driver": "AB123456",
-                "age": 30
-            },
-            {
-                "name": "Водитель 5",
-                "passport": "0987654321",
-                "id_driver": "CD789012",
-                "age": 25
-            }
-        ]
+        "driver_id": 2,
+        "driver_name": "Петров Михаил Викторович",
+        "driver_passport": 1234567890,
+        "driver_age": 18,
+        "driver_number": 9999999,
+
     },
     {
-        "polis_number": 3,
-        "polis_cost": 800,
-        "polis_start": "03.01.2024",
-        "polis_end": "03.01.2025",
-        "polis_ts": "Модель 3",
-        "polis_number_ts": "PQ789RS",
-        "polis_drivers": [
-            {
-                "name": "Водитель 4",
-                "passport": "1234567890",
-                "id_driver": "AB123456",
-                "age": 30
-            },
-            {
-                "name": "Водитель 5",
-                "passport": "0987654321",
-                "id_driver": "CD789012",
-                "age": 25
-            }
-        ]
+        "driver_id": 3,
+        "driver_name": "Сидорова Елена Петровна",
+        "driver_passport": 1234567890,
+        "driver_age": 18,
+        "driver_number": 9999999,
+
     },
     {
-        "polis_number": 4,
-        "polis_cost": 1500,
-        "polis_start": "04.01.2024",
-        "polis_end": "04.01.2025",
-        "polis_ts": "Модель 4",
-        "polis_number_ts": "UV101WZ",
-        "polis_drivers": [
-            {
-                "name": "Водитель 4",
-                "passport": "111122223333",
-                "id_driver": "XY987654",
-                "age": 35
-            },
-            {
-                "name": "Водитель 5",
-                "passport": "555566667777",
-                "id_driver": "ZW123456",
-                "age": 28
-            }
-        ]
+        "driver_id": 4,
+        "driver_name": "Козлов Игорь Дмитриевич",
+        "driver_passport": 1234567890,
+        "driver_age": 18,
+        "driver_number": 9999999,
+
     },
     {
-        "polis_number": 5,
-        "polis_cost": 900,
-        "polis_start": "05.01.2024",
-        "polis_end": "05.01.2025",
-        "polis_ts": "Модель 5",
-        "polis_number_ts": "MN222OP",
-        "polis_drivers": [
-            {
-                "name": "Водитель 4",
-                "passport": "111122223333",
-                "id_driver": "XY987654",
-                "age": 35
-            },
-            {
-                "name": "Водитель 5",
-                "passport": "555566667777",
-                "id_driver": "ZW123456",
-                "age": 28
-            }
-        ]
+        "driver_id": 5,
+        "driver_name": "Григорьева Ольга Сергеевна",
+        "driver_passport": 1234567890,
+        "driver_age": 18,
+        "driver_number": 9999999,
+
     },
     {
-        "polis_number": 6,
-        "polis_cost": 1100,
-        "polis_start": "06.01.2024",
-        "polis_end": "06.01.2025",
-        "polis_ts": "Модель 6",
-        "polis_number_ts": "KL333QR",
-        "polis_drivers": [
-            {
-                "name": "Водитель 4",
-                "passport": "1234567890",
-                "id_driver": "AB123456",
-                "age": 30
-            },
-            {
-                "name": "Водитель 5",
-                "passport": "555566667777",
-                "id_driver": "ZW123456",
-                "age": 28
-            },
-{
-                "name": "Водитель 4",
-                "passport": "1234567890",
-                "id_driver": "AB123456",
-                "age": 30
-            },
-            {
-                "name": "Водитель 5",
-                "passport": "555566667777",
-                "id_driver": "ZW123456",
-                "age": 28
-            },
-{
-                "name": "Водитель 4",
-                "passport": "1234567890",
-                "id_driver": "AB123456",
-                "age": 30
-            },
-            {
-                "name": "Водитель 5",
-                "passport": "555566667777",
-                "id_driver": "ZW123456",
-                "age": 28
-            },
-        ]
+        "driver_id": 6,
+        "driver_name": "Никитин Артем Валентинович",
+        "driver_passport": 1234567890,
+        "driver_age": 18,
+        "driver_number": 9999999,
+
     }
 ]
 
 
-def GetOrders(request):
+def GetDrivers(request):
     return render(request, 'orders.html', {'data': {
         'current_date': date.today(),
         'orders': database
-
     }})
 
+#
+def GetDriver(request, driver_id=None):
+    if (driver_id is not None) and (driver_id != 0):
+        # Обработка GET-запроса с параметром driver_id
+        if driver_id is not None:
+            order = None
+            for obj in database:
+                if obj['driver_id'] == int(driver_id):
+                    order = obj
+                    break
+            if order is None:
+                raise Http404("object not found")
+            filtered_services = [order]
 
-# Create your views here.
-def GetOrder(request, polis_number):
-    order = None
-    for obj in database:
-        if obj['polis_number'] == polis_number:
-            order = obj
-            break
-    if order is None:
-        raise Http404("object not found")
-    return render(request, 'order.html', {'data': {
-        'current_date': date.today(),
-        'order': order
-    }})
+        return render(request, 'services.html', {'filtered_services': filtered_services})
 
-
-def sendText(request):
-    if request.method == 'POST':
-
-        input_text = request.POST.get('text', '')
-        response_text = f"Вы ввели: {input_text}"
-
-        return HttpResponse(response_text)
-    else:
-
-        return render(request, 'base.html')
-
-
-def services(request, polis_number):
-    order = None
-    for obj in database:
-        if obj['polis_number'] == polis_number:
-            order = obj
-            break
-    if order is None:
-        raise Http404("object not found")
-    return render(request, 'services.html', {
-        'filtered_services': [order]  # Передаем только один элемент, а не весь список
-    })
-
-def filter(request):
-    filter_keyword = request.GET.get('filter_keyword')
-    filter_field = request.GET.get('filter_field')
-    print(filter_keyword)
-    print(filter_field)
-
-    if not filter_keyword or not filter_field:
-        return HttpResponseBadRequest("Укажите ключевое слово")
-
-    filter_keyword = str(filter_keyword)
-    filtered_services = []
-
-    if filter_field == "polis_number":
-        filtered_services = [service for service in database if filter_keyword == str(service["polis_number"])]
-    elif filter_field == "polis_ts":
-        filtered_services = [service for service in database if filter_keyword in service["polis_ts"]]
-    elif filter_field == "polis_number_ts":
-        filtered_services = [service for service in database if filter_keyword in service["polis_number_ts"]]
-    elif filter_field == "id_driver":
-        filtered_services = [service for service in database if any(
-            "id_driver" in driver and filter_keyword == driver["id_driver"] for driver in
-            service.get("polis_drivers", []))]
 
     else:
-        pass
+        filter_keyword = request.GET.get('FullName')
+        filtered_services = []
 
-    return render(request, 'services.html', {'filtered_services': filtered_services})
+        # Остальная логика фильтрации
+        if filter_keyword:
+            filtered_services = [service for service in database if
+                                 filter_keyword.lower() in service["driver_name"].lower()]
+
+        return render(request, 'orders.html', {'data': {'orders': filtered_services}})
+
+
+# def filter(request):
+#     filter_keyword = request.GET.get('filter_keyword')
+#
+#     print(filter_keyword)
+#
+#     if not filter_keyword:
+#         return HttpResponseBadRequest("Укажите ключевое слово")
+#     else:
+#         filter_keyword = str(filter_keyword)
+#         filtered_services = []
+#         filtered_services = [service for service in database if
+#                              filter_keyword.lower() in service["driver_name"].lower()]
+#         return render(request, 'services.html', {'filtered_services': filtered_services})
+
+

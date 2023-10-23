@@ -113,13 +113,22 @@ body {
     padding-left: 20px;
 
 }
-
-.driver_number{
-    flex-direction: row;
+.driver_card img{
+    width:145px;
+    height:200px;
+}
+.img_number{
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+
+}
+.driver_number{
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: space-around;
     width: 100%;
+    padding-left: 5px;
     font-weight: bold;
 
 }

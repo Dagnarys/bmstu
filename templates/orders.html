@@ -14,15 +14,24 @@
         <a href="{% url 'services' order.driver_id%}">
         <div class="box">
             <div class="driver_card">
+                <div class="img_number">
+                    <div class="img">
+{#                        <img src="{{ order.driver_photo}}" alt="{{ order.driver_name }}">#}
+                        <img src="{{ order.driver_photo}}" alt="{{ order.driver_name }}">
 
-                <div class="driver_number">
-                    <p>Водительское удостоверение</p>
-                    <span>
-                        <p>
-                            {{order.driver_number}}
-                        </p>
-                    </span>
+                    </div>
+                    <div class="driver_number">
+
+                        <p>Водительское удостоверение</p>
+                        <span>
+                            <p>
+                                {{order.driver_number}}
+                            </p>
+                        </span>
+
+                    </div>
                 </div>
+
                 <div class="driver_name">
                     ФИО водителя
                     <span><p>{{ order.driver_name }}</p></span>

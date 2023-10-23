@@ -16,8 +16,7 @@
             <div class="driver_card">
                 <div class="img_number">
                     <div class="img">
-{#                        <img src="{{ order.driver_photo}}" alt="{{ order.driver_name }}">#}
-                        <img src="{{ order.driver_photo}}" alt="{{ order.driver_name }}">
+                        <img src="{% static order.driver_photo %}" alt="{{ order.driver_name }}">
 
                     </div>
                     <div class="driver_number">
@@ -36,26 +35,7 @@
                     ФИО водителя
                     <span><p>{{ order.driver_name }}</p></span>
                 </div>
-{#                <div class="driver_passport">#}
-{#                    <p>Паспорт<br></p>#}
-{#                    <span><p>{{ order.driver_passport }}</p></span>#}
-{#                </div>#}
-{#                <div class="driver_age">#}
-{#                    <p>Возраст</p>#}
-{#                    <span>#}
-{#                        <p>#}
-{#                            {{ order.driver_age }}#}
-{#                        </p>#}
-{#                    </span>#}
-{#                </div>#}
-{#                <div class="driver_number">#}
-{#                    <p>Водительское удостоверение</p>#}
-{#                    <span>#}
-{#                        <p>#}
-{#                            {{order.driver_number}}#}
-{#                        </p>#}
-{#                    </span>#}
-{#                </div>#}
+
 
             </div>
         </div>

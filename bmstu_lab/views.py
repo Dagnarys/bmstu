@@ -20,7 +20,7 @@ database = [
         "driver_passport": 1234567890,
         "driver_age": 18,
         "driver_number": 9999999,
-        "driver_photo": "static/imgs/img1.png"
+        "driver_photo": "/imgs/img1.png"
 
     },
     {
@@ -29,7 +29,7 @@ database = [
         "driver_passport": 1234567890,
         "driver_age": 18,
         "driver_number": 9999999,
-        "driver_photo": "static/imgs/img2.png"
+        "driver_photo": "/imgs/img2.png"
 
     },
     {
@@ -38,7 +38,7 @@ database = [
         "driver_passport": 1234567890,
         "driver_age": 18,
         "driver_number": 9999999,
-        "driver_photo": "static/imgs/img3.png"
+        "driver_photo": "/imgs/img3.png"
 
     },
     {
@@ -47,7 +47,7 @@ database = [
         "driver_passport": 1234567890,
         "driver_age": 18,
         "driver_number": 9999999,
-        "driver_photo": "static/imgs/img4.png"
+        "driver_photo": "/imgs/img4.png"
 
     },
     {
@@ -56,7 +56,7 @@ database = [
         "driver_passport": 1234567890,
         "driver_age": 18,
         "driver_number": 9999999,
-        "driver_photo": "static/imgs/img5.png"
+        "driver_photo": "/imgs/img5.png"
 
     },
     {
@@ -65,7 +65,7 @@ database = [
         "driver_passport": 1234567890,
         "driver_age": 18,
         "driver_number": 9999999,
-        "driver_photo": "static/imgs/img6.png"
+        "driver_photo": "/imgs/img6.png"
 
     }
 ]

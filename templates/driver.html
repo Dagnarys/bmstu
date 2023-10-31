@@ -2,15 +2,15 @@
 {% load static %}
 
 {% block title %}
-    {% for data in filtered_services %}
+    {% for data in driver %}
             {{ data.driver_id }}
     {% endfor %}
 {% endblock %}
 
 {% block content %}
-    {% if filtered_services %}
+    {% if driver %}
         <div class="boxes">
-            {% for data in filtered_services %}
+            {% for data in driver %}
                         <div class="box">
                             <div class="driver_card">
 

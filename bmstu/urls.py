@@ -26,7 +26,7 @@ urlpatterns = [
     # path('order/<int:driver_id>/', views.GetOrder, name='order_url'),
     # path('sendText', views.sendText, name='sendText'),
     # path('filter/', views.filter, name='filter'),
-    path('services/<int:driver_id>/', views.GetDriver, name='services'),
+    path('driver/<int:driver_id>/', views.GetDriver, name='services'),
     # path('services/', views.GetDriver, name='services'),
 
 ]

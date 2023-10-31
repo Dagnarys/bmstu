@@ -10,13 +10,13 @@
     </form>
 <div class="boxes">
 
-    {%for order in data.orders %}
-        <a href="{% url 'services' order.driver_id%}">
+    {%for driver in drivers %}
+        <a href="{% url 'services' driver.id%}">
         <div class="box">
             <div class="driver_card">
                 <div class="img_number">
                     <div class="img">
-                        <img src="{% static order.driver_photo %}" alt="{{ order.driver_name }}">
+                        <img src="{% static driver.url_photo %}" alt="{{ driver.full_name }}">
 
                     </div>
                     <div class="driver_number">
@@ -24,7 +24,7 @@
                         <p>Водительское удостоверение</p>
                         <span>
                             <p>
-                                {{order.driver_number}}
+                                {{driver.driver_license_number}}
                             </p>
                         </span>
 
@@ -33,7 +33,7 @@
 
                 <div class="driver_name">
                     ФИО водителя
-                    <span><p>{{ order.driver_name }}</p></span>
+                    <span><p>{{ driver.full_name }}</p></span>
                 </div>
 
 

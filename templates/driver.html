@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-
+    {% if data.driver %}
         <div class="boxes">
 
             <div class="box">
@@ -78,6 +78,8 @@
             </div>
 
         </div>
-
+    {% else %}
+        <h3 style="color: #000">Нет результатов для отображения.</h3>
+    {% endif %}
 {% endblock %}
 

@@ -87,6 +87,7 @@ class Database():
                 );
                 --Создание таблицы СтраховкиВодители
                 CREATE TABLE driver_insurance(
+                    id serial PRIMARY KEY,
                     id_driver INT NOT NULL,
                     id_insurance INT NOT NULL
                 
@@ -420,39 +421,4 @@ class Database():
             print("Соединение с базой данных закрыто")
 
 
-# Вызов функции
-db = Database()
-# Вызов функции для подключения к БД
-db.connect()
-db.drop_table()
 
-# Вызов функции для создания таблицы в БД
-db.create_table()
-
-# Вызов функции для заполнения записей в таблицу БД
-db.insert_default_value()
-
-# Вызов функции для добавления новых записей города
-# db.insert_driver()
-# Вызов функции для добавления новых записей вакансий
-# db.insert_insurance()
-# Вызов функции для добавления новых записей вакансиигорода
-# # db.insert_driver_insurance()
-
-# Вызов функции для вывода все записи
-# db.select_all()
-# Вызов функции печать для вывода все записи
-# db.print_select_all()
-
-# Вызов функции для обновления статуса в таблице Город
-# db.update_status_delete_city(True, 5)
-
-# Вызов функции для вывода записей из разных таблиц в одну таблицу
-# db.get_vacancycity()
-# db.get_vacancycity_by_id(1)
-
-# Вызов функции для вывода записи в таблицу Город в котором статус доступен
-# db.get_city_with_status_true()
-
-# Вызов функции для закрытия БД
-# db.close()

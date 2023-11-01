@@ -24,14 +24,15 @@ def GetDrivers(request):
 
 
 def GetDriver(request, id):
-    driver = Driver.objects.get(id=id)
-    return render(request, 'driver.html', {'data': {
-        'driver': driver
-    }})
+    driver = Driver.objects.get(id=id, status=True)
+    if driver is not None:
+        return render(request, 'driver.html', {'data': {
+            'driver': driver
+        }})
 
 def DeleteDriverByID(request):
     if request.method == 'POST':
-        # Получаем значение city_id из POST-запроса
+
         id_driver = int(request.POST.get('id_driver'))
         if (id_driver is not None):
             # Выполняем SQL запрос для редактирования статуса

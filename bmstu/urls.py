@@ -21,13 +21,8 @@ from bmstu_lab import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('hello/', views.hello),
     path('', views.GetDrivers, name='drivers'),
-    # path('order/<int:driver_id>/', views.GetOrder, name='order_url'),
-    # path('sendText', views.sendText, name='sendText'),
-    # path('filter/', views.filter, name='filter'),
     path('driver/<int:id>/', views.GetDriver, name='driver'),
-    # path('services/', views.GetDriver, name='services'),
     path('delete_driver/', views.DeleteDriverByID, name='delete_driver'),
 
 ]

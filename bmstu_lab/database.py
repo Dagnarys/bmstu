@@ -279,7 +279,7 @@ class Database():
         return data_print
 
     # Обновление статуса в таблице Водитель
-    def update_status_delete_city(self, status, id_driver):
+    def update_status_delete_driver(self, status, id_driver):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(

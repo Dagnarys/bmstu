@@ -4,14 +4,14 @@
 {% block title %}Список водителей{% endblock %}
 
 {% block content %}
-    <form method="GET" action="{% url 'services' driver_id=0%}">
-        <input type="text" name="FullName" placeholder="Фильтр по ФИО" value="{{ request.GET.FullName }}">
+    <form method="GET" action="{% url 'drivers' %}">
+        <input type="text" name="full_name" placeholder="Фильтр по ФИО" value="{{ request.GET.full_name }}">
         <button type="submit">Применить фильтр</button>
     </form>
 <div class="boxes">
-
-    {%for driver in drivers %}
-        <a href="{% url 'services' driver.id%}">
+{{ drivers }}
+    {%for driver in data.drivers %}
+        <a href="{% url 'driver' driver.id%}">
         <div class="box">
             <div class="driver_card">
                 <div class="img_number">
@@ -35,6 +35,12 @@
                     ФИО водителя
                     <span><p>{{ driver.full_name }}</p></span>
                 </div>
+
+                <form method="POST" action="{% url 'delete_driver' %}">
+                    {% csrf_token %}
+                    <input type="text" name="id_driver" value="{{ driver.id }}" style="display: none;">
+                    <button class="delete" type="submit">Удалить водителя</button>
+                </form>
 
 
             </div>

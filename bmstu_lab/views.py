@@ -10,12 +10,12 @@ from .models import Driver
 
 
 def GetDrivers(request):
-    filter_keyword = request.GET.get('filter_keyword')
+    filter_keyword = request.GET.get('full_name')
 
     if filter_keyword is None:
         drivers = Driver.objects.filter(status=True)
     else:
-        drivers = Driver.objects.filter(name=filter_keyword, status=True)
+        drivers = Driver.objects.filter(full_name__icontains=filter_keyword, status=True)
 
     return render(request, 'drivers.html', {'data': {
         'current_date': date.today(),
@@ -23,21 +23,21 @@ def GetDrivers(request):
     }})
 
 
-def GetDriver(request, driver_id=None):
+def GetDriver(request, id):
     driver = Driver.objects.get(id=id)
     return render(request, 'driver.html', {'data': {
         'driver': driver
     }})
 
-def DeleteCityByID(request):
+def DeleteDriverByID(request):
     if request.method == 'POST':
         # Получаем значение city_id из POST-запроса
-        driver_id = int(request.POST.get('driver_id'))
-        if (driver_id is not None):
+        id_driver = int(request.POST.get('id_driver'))
+        if (id_driver is not None):
             # Выполняем SQL запрос для редактирования статуса
             DB = Database()
             DB.connect()
-            DB.update_status_delete_city(status=False, id_driver=driver_id)
+            DB.update_status_delete_driver(status=False, id_driver=id_driver)
             DB.close()
         # Перенаправим на предыдующую ссылку после успешного удаления
         return redirect('drivers')

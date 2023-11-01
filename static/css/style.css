@@ -76,7 +76,7 @@ body {
     padding: 10px;
     border: 2px solid red;
     max-height: 100%;
-    width: 400px;
+    width: 430px;
 
     border-radius: 10px; /* Увеличил радиус закругления углов */
     /*background-color: rgb(206, 170, 170);*/
@@ -119,6 +119,7 @@ body {
 }
 .img_number{
     display: flex;
+    width: 100%;
 
 }
 .driver_number{
@@ -164,16 +165,29 @@ body {
     font-weight: bold;
 }
 
-.driver_id{
+.driver_phone{
     flex-direction: row;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    width: 360px;
+    width: 100%;
     font-weight: bold;
 }
-.driver_id p{
-    margin-top: 0;
+.driver_address{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    font-weight: bold;
+}
+.driver_email{
+    flex-direction: row;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+    font-weight: bold;
 }
 .button-container {
     display: flex;
@@ -181,6 +195,12 @@ body {
     align-items: flex-end;
     height: 100px;
     width:100%; /* Вы можете настроить высоту по вашему желанию */
+}
+.delete{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
 }
 
 .centered-button {

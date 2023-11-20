@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 @api_view(["GET"])
 def search_driver(request):
     """
-    Возвращает список городов
+    Возвращает список страховок
     """
     def get_draft_insurance_id():
         insurance = Insurance.objects.filter(status=1).first()
@@ -57,7 +57,7 @@ def search_driver(request):
 @api_view(['GET'])
 def get_driver_by_id(request, driver_id):
     """
-    Возвращает информацию о конкретном городе
+    Возвращает информацию о конкретном водителе
     """
     if not Driver.objects.filter(pk=driver_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -72,7 +72,7 @@ def get_driver_by_id(request, driver_id):
 @api_view(['PUT'])
 def update_driver(request, driver_id):
     """
-    Обновляет информацию о городе
+    Обновляет информацию о водителе
     """
     if not Driver.objects.filter(pk=driver_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -90,7 +90,7 @@ def update_driver(request, driver_id):
 @api_view(["POST"])
 def create_driver(request):
     """
-    Добавляет новый город
+    Добавляет новый водителя
     """
     Driver.objects.create()
 
@@ -103,7 +103,7 @@ def create_driver(request):
 @api_view(["DELETE"])
 def delete_driver(request, driver_id):
     """
-    Удаляет город
+    Удаляет водителя
     """
     if not Driver.objects.filter(pk=driver_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -121,7 +121,7 @@ def delete_driver(request, driver_id):
 @api_view(["POST"])
 def add_driver_to_insurance(request, driver_id):
     """
-    Добавляет город в вакансию
+    Добавляет водителя в страховку
     """
     if not Driver.objects.filter(pk=driver_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -144,7 +144,7 @@ def add_driver_to_insurance(request, driver_id):
 @api_view(["GET"])
 def get_driver_image(request, driver_id):
     """
-    Возвращает фото города
+    Возвращает фото водителя
     """
     if not Driver.objects.filter(pk=driver_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -157,7 +157,7 @@ def get_driver_image(request, driver_id):
 @api_view(["PUT"])
 def update_driver_image(request, driver_id):
     """
-    Обновляет фото города
+    Обновляет фото водителя
     """
     if not Driver.objects.filter(pk=driver_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -171,25 +171,12 @@ def update_driver_image(request, driver_id):
     return Response(serializer.data)
 
 
-# @api_view(["GET"])
-# def get_insurances(request):
-#     """
-#     Возвращает список вакансий
-#     """
-#     insurances = Insurance.objects.all()
-#
-#     request_status = request.GET.get("status")
-#     if request_status:
-#         insurances = insurances.filter(status=request_status)
-#
-#     serializer = InsuranceSerializer(insurances, many=True)
-#
-#     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def get_insurances(request):
     """
-    Возвращает список вакансий
+    Возвращает список страховок
     """
     insurances = Insurance.objects.all()
 
@@ -228,7 +215,7 @@ def get_insurances(request):
 @api_view(["GET"])
 def get_insurance_by_id(request, insurance_id):
     """
-    Возвращает информацию о конкретной вакансии
+    Возвращает информацию о конкретной страховке
     """
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -242,7 +229,7 @@ def get_insurance_by_id(request, insurance_id):
 @api_view(["PUT"])
 def update_insurance(request, insurance_id):
     """
-    Обновляет информацию о вакансии
+    Обновляет информацию о страховке
     """
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -264,7 +251,7 @@ def update_insurance(request, insurance_id):
 @api_view(["PUT"])
 def update_status_user(request, insurance_id):
     """
-    Пользователь обновляет информацию о вакансии
+    Пользователь обновляет информацию о страховке
     """
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -287,7 +274,7 @@ def update_status_user(request, insurance_id):
 @api_view(["PUT"])
 def update_status_admin(request, insurance_id):
     """
-    Модератор обновляет информацию о вакансии
+    Модератор обновляет информацию о страховке
     """
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -338,7 +325,7 @@ def update_status_admin(request, insurance_id):
 @api_view(["DELETE"])
 def delete_insurance(request, insurance_id):
     """
-    Удаляет вакансию
+    Удаляет страховку
     """
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -357,7 +344,7 @@ def delete_insurance(request, insurance_id):
 @api_view(["DELETE"])
 def delete_driver_from_insurance(request, insurance_id, driver_id):
     """
-    Удаляет город из вакансии
+    Удаляет водителя из страховки
     """
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)

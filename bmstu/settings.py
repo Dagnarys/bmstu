@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bmstu_lab.apps.BmstuLabConfig',
+    'rest_framework',
     'bmstu',
     'corsheaders',
 ]
@@ -79,9 +80,9 @@ WSGI_APPLICATION = 'bmstu.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "dagnarys",
-        'USER': "postgres",
-        'PASSWORD': "postgres",
+        'NAME': "dagnarys_database",
+        'USER': "dagnarys",
+        'PASSWORD': "Sportsmen13star",
 
 
     }

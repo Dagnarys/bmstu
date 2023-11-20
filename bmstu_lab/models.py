@@ -62,22 +62,3 @@ class Insurance(models.Model):
         verbose_name_plural = "Страховки"
 
 
-class Users(models.Model):
-    id = models.BigAutoField(primary_key=True, serialize=False)
-    login = models.CharField(max_length=50)
-    password = models.CharField(max_length=255)
-    admin = models.BooleanField()
-
-    class Meta:
-        managed = False
-        db_table = 'users'
-
-
-class DriverInsurance(models.Model):
-    id = models.BigAutoField(primary_key=True, serialize=False)
-    id_driver = models.ForeignKey(Driver, on_delete=models.CASCADE, db_column='id_driver')
-    id_insurance = models.ForeignKey(Insurance, on_delete=models.CASCADE, db_column='id_insurance')
-
-    class Meta:
-        managed = False
-        db_table = 'driver_insurance'

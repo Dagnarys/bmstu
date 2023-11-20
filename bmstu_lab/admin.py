@@ -1,9 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Insurance, DriverInsurance, Driver, Users
+from .models import Insurance, Driver
 
 admin.site.register(Insurance)
-admin.site.register(DriverInsurance)
 admin.site.register(Driver)
-admin.site.register(Users)
+

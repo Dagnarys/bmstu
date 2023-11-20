@@ -3,19 +3,19 @@ from rest_framework import serializers
 from .models import *
 
 
-class CitySerializer(serializers.ModelSerializer):
+class DriverSerializer(serializers.ModelSerializer):
     class Meta:
         # Модель, которую мы сериализуем
-        model = City
+        model = Driver
         # Поля, которые мы сериализуем (Все поля)
         fields = '__all__'
 
 
-class VacancySerializer(serializers.ModelSerializer):
-    cities = CitySerializer(read_only=True, many=True)
+class InsuranceSerializer(serializers.ModelSerializer):
+    drivers = DriverSerializer(read_only=True, many=True)
 
     class Meta:
         # Модель, которую мы сериализуем
-        model = Vacancy
+        model = Insurance
         # Поля, которые мы сериализуем (Все поля)
-        fields = '__all__
+        fields = '__all__'

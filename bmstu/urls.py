@@ -15,14 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from bmstu_lab import views
+from django.urls import path, include
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.GetDrivers, name='drivers'),
-    path('driver/<int:id>/', views.GetDriver, name='driver'),
-    path('delete_driver/', views.DeleteDriverByID, name='delete_driver'),
+    path('',include('bmstu_lab.urls'))
 
 ]

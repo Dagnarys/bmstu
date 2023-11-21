@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db import models
 from django.utils import timezone
 
@@ -37,9 +37,9 @@ class Insurance(models.Model):
         (4, 'Отменён'),
         (5, 'Удалён'),
     )
-
-    start_date = models.DateField(default="", verbose_name="Дата начала")
-    end_date = models.DateField(default="", verbose_name="Дата конца")
+    number_insurance = models.CharField(max_length=10,default="xx123xx123",verbose_name="Номер страховки")
+    start_date = models.DateField(default=datetime.now(), verbose_name="Дата начала")
+    end_date = models.DateField(default=(datetime.now() + timedelta(days=365)), verbose_name="Дата конца")
     premium_amount = models.FloatField(default=0, verbose_name="Сумма")
     insurance_type = models.BooleanField(default=0, verbose_name="Тип страхования")
     status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")
@@ -55,7 +55,7 @@ class Insurance(models.Model):
     drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
 
     def __str__(self):
-        return self.vehicle_license_plate
+        return self.number_insurance
 
     class Meta:
         verbose_name = "Страховка"

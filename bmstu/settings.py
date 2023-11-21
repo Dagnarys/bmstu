@@ -161,7 +161,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # MEDIA_URL = '/media/'
-#
+# #
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = 'images'
 AWS_ACCESS_KEY_ID = '1cafBrbW9EMlrpJmuYeo'

@@ -294,30 +294,30 @@ def update_status_admin(request, insurance_id):
     # insurance.status = request_status
     # insurance.save()
 
-    insurance = Insurance.objects.get(pk=insurance_id)
-    if insurance.status != 2:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    else:
-        insurance.status = 4
-        insurance.save()
-        if insurance.status == 4:
-            insurance.date_complete = datetime.now()
-            insurance.save()
-
-    # request_status = request.data["status"]
-    #
-    # if request_status not in [3, 4]:
-    #     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    #
     # insurance = Insurance.objects.get(pk=insurance_id)
-    #
-    # insurance_status = insurance.status
-    #
-    # if insurance_status != 2:
+    # if insurance.status != 2:
     #     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    #
-    # insurance.status = request_status
-    # insurance.save()
+    # else:
+    #     insurance.status = 3
+    #     insurance.save()
+    #     if insurance.status == 3:
+    #         insurance.date_complete = datetime.now()
+    #         insurance.save()
+
+    request_status = request.data["status"]
+
+    if request_status not in [3, 4]:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    insurance = Insurance.objects.get(pk=insurance_id)
+
+    insurance_status = insurance.status
+
+    if insurance_status != 2:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    insurance.status = request_status
+    insurance.save()
 
     serializer = InsuranceSerializer(insurance, many=False)
     return Response(serializer.data)

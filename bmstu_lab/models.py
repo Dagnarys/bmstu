@@ -1,9 +1,23 @@
 from datetime import datetime, timedelta
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 # Create your models here.
+class Users(models.Model):
+    login = models.CharField(max_length=255, default='user', verbose_name='Логин')
+    password = models.CharField(max_length=255, default='user',verbose_name='Пароль')
+    admin = models.BooleanField(default= False, verbose_name='Статус модератора')
+
+    def __str__(self):
+        return self.login
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+
 class Driver(models.Model):
     STATUS_CHOICES = (
         (1, 'Действует'),
@@ -53,6 +67,7 @@ class Insurance(models.Model):
     vehicle_license_plate = models.CharField(max_length=10, default="", verbose_name="Гос. номер")
 
     drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE,null=True, verbose_name="Пользователь")
 
     def __str__(self):
         return self.number_insurance
@@ -60,5 +75,4 @@ class Insurance(models.Model):
     class Meta:
         verbose_name = "Страховка"
         verbose_name_plural = "Страховки"
-
 

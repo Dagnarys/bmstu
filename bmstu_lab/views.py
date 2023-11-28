@@ -19,29 +19,16 @@ def search_driver(request):
         return insurance.pk
 
     # Получим параметры запроса из URL
-    name = request.GET.get('name')
-    foundation_date = request.GET.get('foundation_date')
-    grp = request.GET.get('grp')
-    climate = request.GET.get('climate')
-    square = request.GET.get('square')
-    description = request.GET.get('description')
+    full_name = request.GET.get('full_name')
+
 
     # Получение данные после запроса с БД (через ORM)
     driver = Driver.objects.filter(status=1)
 
     # Применим фильтры на основе параметров запроса, если они предоставлены
-    if name:
-        driver = driver.filter(name__icontains=name)
-    if foundation_date:
-        driver = driver.filter(foundation_date=foundation_date)
-    if grp:
-        driver = driver.filter(grp=grp)
-    if climate:
-        driver = driver.filter(climate__icontains=climate)
-    if square:
-        driver = driver.filter(square=square)
-    if description:
-        driver = driver.filter(description__icontains=description)
+    if full_name:
+        driver = driver.filter(full_name__icontains=full_name)
+
 
     serializer = DriverSerializer(driver, many=True)
     # для работы с лаб4

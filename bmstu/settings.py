@@ -9,9 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 import os
+
+from django.core.cache.backends.redis import RedisCache
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +27,12 @@ SECRET_KEY = 'django-insecure-)ja@371whg2h@6=syiq#&zlu#k8b8lu8ccy)+80pj43%ooa#6n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.32']
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = []
 
 # Application definition
+
+APP_NAME = 'insurances'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,10 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bmstu_lab.apps.BmstuLabConfig',
     'rest_framework',
+    APP_NAME,
     'bmstu',
     'corsheaders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -137,12 +143,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
 ]
 
-CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
-
-CORS_ALLOWED_URLS = [
-    r"^/api/drivers/search/$",
-    r"^/api/drivers/\d+/$",
-]
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -154,16 +154,38 @@ CORS_ALLOW_HEADERS = [
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
+    "Authorization",
+    "Content-Type",
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# MEDIA_URL = '/media/'
-# #
+REDIS_HOST = 'localhost'
+REDIS_PORT = '6379'
+
+JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": "MY_SIGNING_KEY_123",
+}
+
+AUTH_USER_MODEL = APP_NAME + '.CustomUser'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://" + REDIS_HOST + ":" + REDIS_PORT,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+    }
+}
+
+
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = 'images'
 AWS_ACCESS_KEY_ID = '0RMHrKrfKv57FZHEvDVf'
 AWS_SECRET_ACCESS_KEY = 'B25dN3iIAdrT9jIe98iekAPNSrORsaVEEGNkllVa'
 AWS_S3_ENDPOINT_URL = 'http://127.0.0.1:9000'
+

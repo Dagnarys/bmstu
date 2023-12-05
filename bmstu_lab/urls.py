@@ -21,4 +21,9 @@ urlpatterns = [
     path('api/insurances/<int:insurance_id>/update_status_admin/', update_status_admin),  # PUT
     path('api/insurances/<int:insurance_id>/delete/', delete_insurance),  # DELETE
     path('api/insurances/<int:insurance_id>/delete_driver/<int:driver_id>/', delete_driver_from_insurance),  # DELETE
+
+    path("api/register/", register),
+    path("api/login/", login),
+    path("api/check/", check),
+    path("api/logout/", logout)
 ]

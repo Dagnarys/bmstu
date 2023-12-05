@@ -1,11 +1,18 @@
+from django.conf import settings
+from django.contrib.auth import authenticate
 from django.http import HttpResponse
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
+from .jwt_helper import create_access_token
+from .permissions import *
 from .serializers import *
 from .models import *
-from datetime import datetime, timezone
+
+
+access_token_lifetime = settings.JWT["ACCESS_TOKEN_LIFETIME"].total_seconds()
 
 @api_view(["GET"])
 def search_driver(request):
@@ -21,7 +28,6 @@ def search_driver(request):
     # Получим параметры запроса из URL
     full_name = request.GET.get('full_name')
 
-
     # Получение данные после запроса с БД (через ORM)
     driver = Driver.objects.filter(status=1)
 
@@ -29,10 +35,7 @@ def search_driver(request):
     if full_name:
         driver = driver.filter(full_name__icontains=full_name)
 
-
     serializer = DriverSerializer(driver, many=True)
-    # для работы с лаб4
-    # return Response(serializer.data)
 
     resp = {
         "draft_insurance": get_draft_insurance_id(),
@@ -57,6 +60,7 @@ def get_driver_by_id(request, driver_id):
 
 
 @api_view(['PUT'])
+@permission_classes([IsModerator])
 def update_driver(request, driver_id):
     """
     Обновляет информацию о водителе
@@ -75,6 +79,7 @@ def update_driver(request, driver_id):
 
 
 @api_view(["POST"])
+@permission_classes([IsModerator])
 def create_driver(request):
     """
     Добавляет новый водителя
@@ -88,6 +93,7 @@ def create_driver(request):
 
 
 @api_view(["DELETE"])
+@permission_classes([IsModerator])
 def delete_driver(request, driver_id):
     """
     Удаляет водителя
@@ -106,6 +112,7 @@ def delete_driver(request, driver_id):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def add_driver_to_insurance(request, driver_id):
     """
     Добавляет водителя в страховку
@@ -142,6 +149,7 @@ def get_driver_image(request, driver_id):
 
 
 @api_view(["PUT"])
+@permission_classes([IsModerator])
 def update_driver_image(request, driver_id):
     """
     Обновляет фото водителя
@@ -161,45 +169,38 @@ def update_driver_image(request, driver_id):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_insurances(request):
-    """
-    Возвращает список страховок
-    """
-    insurances = Insurance.objects.all()
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    user = CustomUser.objects.get(pk=payload["user_id"])
 
-    # Получим параметры запроса из URL
-    status = request.GET.get('status')
-    date_created = request.GET.get('date_created')
-    date_complete = request.GET.get('date_complete')
-    date_form_after = request.GET.get('date_form_after')
-    date_form_before = request.GET.get('date_form_before')
+    status_id = int(request.GET.get("status", -1))
+    user_id = int(request.GET.get("user", -1))
+    date_form_after = request.GET.get("date_form_after")
+    date_form_before = request.GET.get("date_form_before")
 
-    # Применим фильтры на основе параметров запроса, если они предоставлены
-    if status:
-        insurances = insurances.filter(status=status)
-    if date_created:
-        insurances = insurances.filter(date_created=date_created)
-    if date_complete:
-        insurances = insurances.filter(date_complete=date_complete)
+    insurances = Insurance.objects.exclude(status__in=[1, 5]) if user.is_moderator else Insurance.objects.filter(
+        user_id=user.pk)
 
-    # Дата формирования ПОСЛЕ
-    if date_form_after and date_form_before is None:
-        insurances = insurances.filter(date_of_formation__gte=date_form_after)
-    # Дата формирования ДО
-    if date_form_after is None and date_form_before:
-        insurances = insurances.filter(date_of_formation__lte=date_form_before)
+    if status_id != -1:
+        insurances = insurances.filter(status=status_id)
 
-    # Дата формирования ПОСЛЕ и ДО
-    if date_form_after and date_form_before:
-        if date_form_after > date_form_before:
-            return Response('Mistake! It is impossible to sort when "BEFORE" exceeds "AFTER"!')
-        insurances = insurances.filter(date_of_formation__gte=date_form_after, date_of_formation__lte=date_form_before)
+    if user_id != -1:
+        insurances = insurances.filter(user_id=user_id)
+
+    if date_form_after:
+        insurances = insurances.filter(date_of_formation__gte=datetime.strptime(date_form_after, "%Y-%m-%d").date())
+
+    if date_form_before:
+        insurances = insurances.filter(date_of_formation__lte=datetime.strptime(date_form_before, "%Y-%m-%d").date())
 
     serializer = InsuranceSerializer(insurances, many=True)
     return Response(serializer.data)
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_insurance_by_id(request, insurance_id):
     """
     Возвращает информацию о конкретной страховке
@@ -214,6 +215,7 @@ def get_insurance_by_id(request, insurance_id):
 
 
 @api_view(["PUT"])
+@permission_classes([IsAuthenticated])
 def update_insurance(request, insurance_id):
     """
     Обновляет информацию о страховке
@@ -228,14 +230,13 @@ def update_insurance(request, insurance_id):
         serializer.save()
 
     insurance.status = 1
-    # if insurance.status == 1:
-    #     insurance.date_created = datetime.now()
     insurance.save()
 
     return Response(serializer.data)
 
 
 @api_view(["PUT"])
+@permission_classes([IsAuthenticated])
 def update_status_user(request, insurance_id):
     """
     Пользователь обновляет информацию о страховке
@@ -244,8 +245,7 @@ def update_status_user(request, insurance_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     insurance = Insurance.objects.get(pk=insurance_id)
-    # insurance.status = 2
-    # insurance.save()
+
     if insurance.status != 1:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     else:
@@ -259,37 +259,13 @@ def update_status_user(request, insurance_id):
     return Response(serializer.data)
 
 @api_view(["PUT"])
+@permission_classes([IsModerator])
 def update_status_admin(request, insurance_id):
     """
     Модератор обновляет информацию о страховке
     """
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-    # request_status = request.data["status"]
-    #
-    # if request_status in [1, 5]:
-    #     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    #
-    # insurance = Insurance.objects.get(pk=insurance_id)
-    #
-    # lesson_status = insurance.status
-    #
-    # if lesson_status in [2, 3, 4, 5]:
-    #     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    #
-    # insurance.status = request_status
-    # insurance.save()
-
-    # insurance = Insurance.objects.get(pk=insurance_id)
-    # if insurance.status != 2:
-    #     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    # else:
-    #     insurance.status = 3
-    #     insurance.save()
-    #     if insurance.status == 3:
-    #         insurance.date_complete = datetime.now()
-    #         insurance.save()
 
     request_status = request.data["status"]
 
@@ -310,6 +286,7 @@ def update_status_admin(request, insurance_id):
     return Response(serializer.data)
 
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def delete_insurance(request, insurance_id):
     """
     Удаляет страховку
@@ -329,6 +306,7 @@ def delete_insurance(request, insurance_id):
 
 
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def delete_driver_from_insurance(request, insurance_id, driver_id):
     """
     Удаляет водителя из страховки
@@ -346,3 +324,94 @@ def delete_driver_from_insurance(request, insurance_id, driver_id):
     serializer = DriverSerializer(insurance.drivers, many=True)
 
     return Response(serializer.data)
+
+
+@swagger_auto_schema(method='post', request_body=UserLoginSerializer)
+@api_view(["POST"])
+def login(request):
+    serializer = UserLoginSerializer(data=request.data)
+
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+
+    user = authenticate(**serializer.data)
+    if user is None:
+        message = {"message": "invalid credentials"}
+        return Response(message, status=status.HTTP_401_UNAUTHORIZED)
+
+    access_token = create_access_token(user.id)
+
+    user_data = {
+        "user_id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "is_moderator": user.is_moderator,
+        "access_token": access_token
+    }
+
+    response = Response(user_data, status=status.HTTP_201_CREATED)
+
+    response.set_cookie('access_token', access_token, httponly=False, expires=access_token_lifetime)
+
+    return response
+
+
+@api_view(["POST"])
+def register(request):
+    serializer = UserRegisterSerializer(data=request.data)
+
+    if not serializer.is_valid():
+        return Response(status=status.HTTP_409_CONFLICT)
+
+    user = serializer.save()
+
+    access_token = create_access_token(user.id)
+
+    message = {
+        'message': 'User registered successfully',
+        'user_id': user.id,
+        "access_token": access_token
+    }
+
+    response = Response(message, status=status.HTTP_201_CREATED)
+
+    response.set_cookie('access_token', access_token, httponly=False, expires=access_token_lifetime)
+
+    return response
+
+
+@api_view(["POST"])
+def check(request):
+    token = get_access_token(request)
+
+    if token is None:
+        message = {"message": "Token is not found"}
+        return Response(message, status=status.HTTP_401_UNAUTHORIZED)
+
+    if token in cache:
+        message = {"message": "Token in blacklist"}
+        return Response(message, status=status.HTTP_401_UNAUTHORIZED)
+
+    payload = get_jwt_payload(token)
+    user_id = payload["user_id"]
+
+    user = CustomUser.objects.get(pk=user_id)
+    serializer = UserSerializer(user, many=False)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    access_token = get_access_token(request)
+
+    if access_token not in cache:
+        cache.set(access_token, access_token_lifetime)
+
+    message = {"message": "Вы успешно вышли из аккаунта"}
+    response = Response(message, status=status.HTTP_200_OK)
+
+    response.delete_cookie('access_token')
+
+    return response

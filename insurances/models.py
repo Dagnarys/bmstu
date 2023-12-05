@@ -81,8 +81,8 @@ class Insurance(models.Model):
         (5, 'Удалён'),
     )
     number_insurance = models.CharField(max_length=10, default="xx123xx123", verbose_name="Номер страховки")
-    start_date = models.DateField(default=datetime.now(), verbose_name="Дата начала")
-    end_date = models.DateField(default=(datetime.now() + timedelta(days=365)), verbose_name="Дата конца")
+    start_date = models.DateField(default=datetime.now(tz=timezone.utc), verbose_name="Дата начала")
+    end_date = models.DateField(default=(datetime.now(tz=timezone.utc) + timedelta(days=365)), verbose_name="Дата конца")
     premium_amount = models.FloatField(default=0, verbose_name="Сумма")
     insurance_type = models.BooleanField(default=0, verbose_name="Тип страхования")
     status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")

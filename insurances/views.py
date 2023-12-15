@@ -11,14 +11,15 @@ from .permissions import *
 from .serializers import *
 from .models import *
 
-
 access_token_lifetime = settings.JWT["ACCESS_TOKEN_LIFETIME"].total_seconds()
+
 
 @api_view(["GET"])
 def search_driver(request):
     """
     Возвращает список страховок
     """
+
     def get_draft_insurance_id():
         insurance = Insurance.objects.filter(status=1).first()
         if insurance is None:
@@ -125,7 +126,8 @@ def add_driver_to_insurance(request, driver_id):
     insurance = Insurance.objects.filter(status=1).last()
 
     if insurance is None:
-        insurance = Insurance.objects.create(date_created=datetime.now(timezone.utc), date_of_formation=None, date_complete=None)
+        insurance = Insurance.objects.create(date_created=datetime.now(timezone.utc), date_of_formation=None,
+                                             date_complete=None)
 
     insurance.drivers.add(driver)
     insurance.save()
@@ -164,8 +166,6 @@ def update_driver_image(request, driver_id):
         serializer.save()
 
     return Response(serializer.data)
-
-
 
 
 @api_view(["GET"])
@@ -258,6 +258,7 @@ def update_status_user(request, insurance_id):
     serializer = InsuranceSerializer(insurance, many=False)
     return Response(serializer.data)
 
+
 @api_view(["PUT"])
 @permission_classes([IsModerator])
 def update_status_admin(request, insurance_id):
@@ -269,21 +270,23 @@ def update_status_admin(request, insurance_id):
 
     request_status = request.data["status"]
 
-    if request_status not in [3, 4]:
+    if request_status in [1, 5]:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     insurance = Insurance.objects.get(pk=insurance_id)
 
     insurance_status = insurance.status
 
-    if insurance_status != 2:
+    if insurance_status in [3, 4, 5]:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     insurance.status = request_status
+    insurance.date_complete = datetime.now()
     insurance.save()
 
     serializer = InsuranceSerializer(insurance, many=False)
     return Response(serializer.data)
+
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])

@@ -244,8 +244,7 @@ def update_status_user(request, insurance_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     insurance = Insurance.objects.get(pk=insurance_id)
-    # insurance.status = 2
-    # insurance.save()
+
     if insurance.status != 1:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     else:
@@ -253,6 +252,7 @@ def update_status_user(request, insurance_id):
         insurance.save()
         if insurance.status == 2:
             insurance.date_of_formation = datetime.now()
+
             insurance.save()
 
     serializer = InsuranceSerializer(insurance, many=False)
@@ -265,31 +265,6 @@ def update_status_admin(request, insurance_id):
     """
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-    # request_status = request.data["status"]
-    #
-    # if request_status in [1, 5]:
-    #     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    #
-    # insurance = Insurance.objects.get(pk=insurance_id)
-    #
-    # lesson_status = insurance.status
-    #
-    # if lesson_status in [2, 3, 4, 5]:
-    #     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    #
-    # insurance.status = request_status
-    # insurance.save()
-
-    # insurance = Insurance.objects.get(pk=insurance_id)
-    # if insurance.status != 2:
-    #     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    # else:
-    #     insurance.status = 3
-    #     insurance.save()
-    #     if insurance.status == 3:
-    #         insurance.date_complete = datetime.now()
-    #         insurance.save()
 
     request_status = request.data["status"]
 

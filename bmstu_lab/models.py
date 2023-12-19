@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 class Users(models.Model):
     login = models.CharField(max_length=255, default='user', verbose_name='Логин')
     password = models.CharField(max_length=255, default='user',verbose_name='Пароль')
-    admin = models.BooleanField(default= False, verbose_name='Статус модератора')
+    admin = models.BooleanField(default=False, verbose_name='Статус модератора')
 
     def __str__(self):
         return self.login

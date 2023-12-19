@@ -177,11 +177,10 @@ def get_insurances(request):
 
     status_id = int(request.GET.get("status", -1))
     user_id = int(request.GET.get("user", -1))
+
     date_form_after = request.GET.get("date_form_after")
     date_form_before = request.GET.get("date_form_before")
-
-    insurances = Insurance.objects.exclude(status__in=[1, 5]) if user.is_moderator else Insurance.objects.filter(
-        user_id=user.pk)
+    insurances = Insurance.objects.exclude(status__in=[2, 5]) if user.is_moderator else Insurance.objects.filter(user_id=user.pk)
 
     if status_id != -1:
         insurances = insurances.filter(status=status_id)
@@ -291,6 +290,9 @@ def update_status_admin(request, insurance_id):
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete_insurance(request, insurance_id):
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    user_id = payload["user_id"]
     """
     Удаляет страховку
     """
@@ -299,13 +301,18 @@ def delete_insurance(request, insurance_id):
 
     insurance = Insurance.objects.get(pk=insurance_id)
 
-    if insurance.status != 1:
+    insurance_status = insurance.status
+    if insurance_status not in [1]:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     insurance.status = 5
+    insurance.date_complete = datetime.now()
     insurance.save()
 
-    return Response(status=status.HTTP_200_OK)
+    insurances = Insurance.objects.filter(user_id=user_id).exclude(status__in=[5])
+    serializer = InsuranceSerializer(insurances, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["DELETE"])
@@ -361,22 +368,29 @@ def login(request):
 
 @api_view(["POST"])
 def register(request):
-    serializer = UserRegisterSerializer(data=request.data)
+    serializer = UserLoginSerializer(data=request.data)
 
     if not serializer.is_valid():
-        return Response(status=status.HTTP_409_CONFLICT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    user = serializer.save()
+    # Check credentials
+    user = authenticate(**serializer.data)
+    if user is None:
+        message = {"message": "invalid credentials"}
+        return Response(message, status=status.HTTP_401_UNAUTHORIZED)
 
     access_token = create_access_token(user.id)
 
-    message = {
-        'message': 'User registered successfully',
-        'user_id': user.id,
+    user_data = {
+        "user_id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "is_moderator": user.is_moderator,
         "access_token": access_token
     }
+    cache.set(access_token, user_data, access_token_lifetime)
 
-    response = Response(message, status=status.HTTP_201_CREATED)
+    response = Response(user_data, status=status.HTTP_201_CREATED)
 
     response.set_cookie('access_token', access_token, httponly=False, expires=access_token_lifetime)
 

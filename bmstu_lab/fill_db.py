@@ -1,6 +1,7 @@
-from django.core.management import BaseCommand
+
 
 from bmstu_lab.models import Users
+from django.core.management import BaseCommand
 
 
 def add_users():

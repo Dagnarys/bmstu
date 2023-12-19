@@ -67,7 +67,7 @@ class Insurance(models.Model):
     vehicle_license_plate = models.CharField(max_length=10, default="", verbose_name="Гос. номер")
 
     drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
-    user = models.ForeignKey(Users, on_delete=models.CASCADE,null=True, verbose_name="Пользователь")
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 
     def __str__(self):
         return self.number_insurance

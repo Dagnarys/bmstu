@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'bmstu.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "driver_insurance",
+        'NAME': "driver_insurance_1",
         'USER': "postgres",
         'PASSWORD': "postgres",
         'HOST': 'localhost',

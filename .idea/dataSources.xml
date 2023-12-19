@@ -8,12 +8,5 @@
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/database</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="driver_insurance@localhost" uuid="dcedf2a6-8efd-45e2-8304-05c6505d4f96">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/driver_insurance</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>

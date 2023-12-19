@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -119,6 +120,15 @@ def add_driver_to_insurance(request, driver_id):
 
     if insurance is None:
         insurance = Insurance.objects.create(date_created=datetime.now(timezone.utc), date_of_formation=None, date_complete=None)
+        if insurance.status == 1:
+            if insurance.users is None:
+                try:
+                    new_user = Users.objects.create(login="user1")
+                except IntegrityError:
+                    # User with login "user1" already exists, get the existing user
+                    new_user = Users.objects.get(login="user1")
+                insurance.users = new_user
+                insurance.save()
 
     insurance.drivers.add(driver)
     insurance.save()
@@ -252,9 +262,14 @@ def update_status_user(request, insurance_id):
         insurance.save()
         if insurance.status == 2:
             insurance.date_of_formation = datetime.now()
-
             insurance.save()
-
+            if insurance.users is None:
+                new_user = Users.objects.create(login="user1")
+                insurance.users = new_user
+                insurance.save()
+            else:
+                insurance.users.login = "user1"
+                insurance.users.save()
     serializer = InsuranceSerializer(insurance, many=False)
     return Response(serializer.data)
 
@@ -277,6 +292,23 @@ def update_status_admin(request, insurance_id):
 
     if insurance_status != 2:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    else:
+        insurance.status = 4
+        insurance.save()
+
+        if insurance.status == 4:
+            insurance.date_complete = datetime.now()
+            insurance.save()
+
+            if insurance.users is None:
+                try:
+                    new_user = Users.objects.create(login="root")
+                except IntegrityError:
+                    # User with login "root" already exists, get the existing user
+                    new_user = Users.objects.get(login="root")
+                insurance.users = new_user
+                insurance.save()
+
 
     insurance.status = request_status
     insurance.save()

@@ -6,17 +6,17 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Users(models.Model):
-    login = models.CharField(max_length=255, default='user', verbose_name='Логин')
-    password = models.CharField(max_length=255, default='user',verbose_name='Пароль')
-    admin = models.BooleanField(default=False, verbose_name='Статус модератора')
+    id = models.AutoField(primary_key=True, verbose_name="ID")
+    login = models.CharField(max_length=50, unique=True, verbose_name="Логин")
+    password = models.CharField(max_length=50, verbose_name="Пароль")
+    admin = models.BooleanField(default=False, verbose_name="Админ")
 
     def __str__(self):
-        return self.login
+        return f'{self.id}{self.login}'
 
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
-
 
 class Driver(models.Model):
     STATUS_CHOICES = (
@@ -67,7 +67,7 @@ class Insurance(models.Model):
     vehicle_license_plate = models.CharField(max_length=10, default="", verbose_name="Гос. номер")
 
     drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
-    user = models.ForeignKey(Users, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
+    users = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="Пользователь", null=True, blank=True)
 
     def __str__(self):
         return self.number_insurance

@@ -9,9 +9,14 @@ class DriverSerializer(serializers.ModelSerializer):
         # Поля, которые мы сериализуем (Все поля)
         fields = '__all__'
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        fields = ['login']
 
 class InsuranceSerializer(serializers.ModelSerializer):
     drivers = DriverSerializer(read_only=True, many=True)
+    users = UserSerializer(read_only=True)
 
     class Meta:
         # Модель, которую мы сериализуем

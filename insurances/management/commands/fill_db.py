@@ -71,35 +71,35 @@ def add_drivers():
     print("Услуги добавлены")
 
 
-# def add_insurances():
-#     users = CustomUser.objects.filter(is_moderator=False)
-#     if len(users) == 0:
-#         print("Заявки не могут быть добавлены. Сначала добавьте пользователей с помощью команды add_users")
-#         return
-#
-#     drivers = Driver.objects.all()
-#
-#     for _ in range(10):
-#         insurance = Insurance.objects.create()
-#         insurance.name = "Страховка №" + str(insurance.pk)
-#         insurance.status = random.randint(2, 5)
-#
-#         if insurance.status in [3, 4]:
-#             insurance.date_complete = random_date()
-#             insurance.date_of_formation = insurance.date_complete - random_timedelta()
-#             insurance.date_created = insurance.date_of_formation - random_timedelta()
-#         else:
-#             insurance.date_of_formation = random_date()
-#             insurance.date_created = insurance.date_of_formation - random_timedelta()
-#
-#         insurance.user = random.choice(users)
-#
-#         for i in range(random.randint(1, 5)):
-#             insurance.drivers.add(random.choice(drivers))
-#
-#         insurance.save()
-#
-#     print("Заявки добавлены")
+def add_insurances():
+    users = CustomUser.objects.filter(is_moderator=False)
+    if len(users) == 0:
+        print("Заявки не могут быть добавлены. Сначала добавьте пользователей с помощью команды add_users")
+        return
+
+    drivers = Driver.objects.all()
+
+    for _ in range(10):
+        insurance = Insurance.objects.create()
+        insurance.name = "Страховка №" + str(insurance.pk)
+        insurance.status = random.randint(2, 5)
+
+        if insurance.status in [3, 4]:
+            insurance.date_complete = random_date()
+            insurance.date_of_formation = insurance.date_complete - random_timedelta()
+            insurance.date_created = insurance.date_of_formation - random_timedelta()
+        else:
+            insurance.date_of_formation = random_date()
+            insurance.date_created = insurance.date_of_formation - random_timedelta()
+
+        insurance.user = random.choice(users)
+
+        for i in range(random.randint(1, 5)):
+            insurance.drivers.add(random.choice(drivers))
+
+        insurance.save()
+
+    print("Заявки добавлены")
 
 
 class Command(BaseCommand):
@@ -107,4 +107,4 @@ class Command(BaseCommand):
         # management.call_command("clean_db")
 
         add_drivers()
-        # add_insurances()
+        add_insurances()

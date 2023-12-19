@@ -97,17 +97,12 @@ class Insurance(models.Model):
 
     drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
 
-    user = models.ForeignKey(
-        CustomUser,
-        on_delete=models.CASCADE,
-        verbose_name="Пользователь",
-        null=True
-    )
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name="Пользователь", null=True)
 
     def __str__(self):
-        return f'Insurance ID: {self.id}, User: {self.user.name}, Status: {self.get_status_display()}'
+        return self.number_insurance
 
     class Meta:
         verbose_name = "Страховка"
         verbose_name_plural = "Страховки"
-        ordering = ('-date_of_formation',)
+        ordering = ('id',)

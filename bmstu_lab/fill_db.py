@@ -4,8 +4,8 @@ from bmstu_lab.models import Users
 
 
 def add_users():
-    Users.objects.create_user("user1", "user1@user.com", "1234")
-    Users.objects.create_superuser("root", "root@root.com", "1234")
+    Users.objects.create_user("user1", "1234", False)
+    Users.objects.create_superuser("root", "1234", True)
 
     print("Пользователи созданы")
 

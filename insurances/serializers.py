@@ -13,7 +13,7 @@ class DriverSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'name', 'email', 'is_moderator')
+        fields = ['id', 'name', 'email', 'is_moderator']
 
 
 class InsuranceSerializer(serializers.ModelSerializer):

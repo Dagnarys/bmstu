@@ -130,7 +130,7 @@ def add_driver_to_insurance(request, driver_id):
                                              date_complete=None)
 
     insurance.drivers.add(driver)
-
+    
     insurance.save()
 
     serializer = InsuranceSerializer(insurance.drivers, many=True)

@@ -129,8 +129,11 @@ def add_driver_to_insurance(request, driver_id):
         insurance = Insurance.objects.create(date_created=datetime.now(timezone.utc), date_of_formation=None,
                                              date_complete=None)
 
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    user = CustomUser.objects.get(pk=payload["user_id"])
     insurance.drivers.add(driver)
-    
+    insurance.user = user
     insurance.save()
 
     serializer = InsuranceSerializer(insurance.drivers, many=True)
@@ -254,8 +257,12 @@ def update_status_user(request, insurance_id):
         if insurance.status == 2:
             insurance.date_of_formation = datetime.now()
             insurance.save()
-
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    user = CustomUser.objects.get(pk=payload["user_id"])
     serializer = InsuranceSerializer(insurance, many=False)
+    insurance.user = user
+    insurance.save()
     return Response(serializer.data)
 
 
@@ -280,8 +287,12 @@ def update_status_admin(request, insurance_id):
     if insurance_status in [3, 4, 5]:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    moderator = CustomUser.objects.get(pk=payload["user_id"])
     insurance.status = request_status
     insurance.date_complete = datetime.now()
+    insurance.moderator = moderator
     insurance.save()
 
     serializer = InsuranceSerializer(insurance, many=False)

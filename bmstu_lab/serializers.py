@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 class InsuranceSerializer(serializers.ModelSerializer):
     drivers = DriverSerializer(read_only=True, many=True)
     users = UserSerializer(read_only=True)
-
+    moderator = UserSerializer(read_only=True)
     class Meta:
         # Модель, которую мы сериализуем
         model = Insurance

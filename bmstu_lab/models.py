@@ -69,7 +69,7 @@ class Insurance(models.Model):
 
     drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
     users = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="Пользователь", null=True, blank=True)
-
+    moderator = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="Модератор", related_name='moderator', blank=True, null=True)
     def __str__(self):
         return self.number_insurance
 

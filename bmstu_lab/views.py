@@ -306,7 +306,7 @@ def update_status_admin(request, insurance_id):
                 except IntegrityError:
                     # User with login "root" already exists, get the existing user
                     new_user = Users.objects.get(login="root")
-                insurance.users = new_user
+                insurance.moderator = new_user
                 insurance.save()
 
 

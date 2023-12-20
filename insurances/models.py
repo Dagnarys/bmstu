@@ -102,6 +102,7 @@ class Insurance(models.Model):
     def __str__(self):
         return self.number_insurance
 
+
     class Meta:
         verbose_name = "Страховка"
         verbose_name_plural = "Страховки"

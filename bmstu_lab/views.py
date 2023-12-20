@@ -300,7 +300,7 @@ def update_status_admin(request, insurance_id):
             insurance.date_complete = datetime.now()
             insurance.save()
 
-            if insurance.users is None:
+            if insurance.users is not None:
                 try:
                     new_user = Users.objects.create(login="root")
                 except IntegrityError:

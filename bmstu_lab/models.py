@@ -12,11 +12,12 @@ class Users(models.Model):
     admin = models.BooleanField(default=False, verbose_name="Админ")
 
     def __str__(self):
-        return f'{self.id}{self.login}'
+        return self.login
 
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+
 
 class Driver(models.Model):
     STATUS_CHOICES = (

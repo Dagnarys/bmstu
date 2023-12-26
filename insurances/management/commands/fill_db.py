@@ -73,6 +73,7 @@ def add_drivers():
 
 def add_insurances():
     users = CustomUser.objects.filter(is_moderator=False)
+    # moderators = CustomUser.objects.filter(is_superuser=True)
     if len(users) == 0:
         print("Заявки не могут быть добавлены. Сначала добавьте пользователей с помощью команды add_users")
         return
@@ -107,4 +108,4 @@ class Command(BaseCommand):
         # management.call_command("clean_db")
 
         add_drivers()
-        add_insurances()
+        # add_insurances()

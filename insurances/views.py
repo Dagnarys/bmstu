@@ -118,6 +118,10 @@ def add_driver_to_insurance(request, driver_id):
     """
     Добавляет водителя в страховку
     """
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    user_id = payload['user_id']
+
     if not Driver.objects.filter(pk=driver_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -129,11 +133,8 @@ def add_driver_to_insurance(request, driver_id):
         insurance = Insurance.objects.create(date_created=datetime.now(timezone.utc), date_of_formation=None,
                                              date_complete=None)
 
-    token = get_access_token(request)
-    payload = get_jwt_payload(token)
-    user = CustomUser.objects.get(pk=payload["user_id"])
     insurance.drivers.add(driver)
-    insurance.user = user
+    insurance.user = CustomUser.objects.get(pk=user_id)
     insurance.save()
 
     serializer = InsuranceSerializer(insurance.drivers, many=True)
@@ -232,11 +233,24 @@ def update_insurance(request, insurance_id):
     if serializer.is_valid():
         serializer.save()
 
-    insurance.status = 1
-    insurance.save()
+    # insurance.status = 1
+    # insurance.save()
 
     return Response(serializer.data)
 
+@api_view(["POST"])
+@permission_classes([IsRemoteService])
+def calc_amount(request, insurance_id):
+    if not Insurance.objects.filter(pk=insurance_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    insurance = Insurance.objects.get(pk=insurance_id)
+    serializer = InsuranceSerializer(insurance, data=request.data, many=False, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
@@ -257,12 +271,8 @@ def update_status_user(request, insurance_id):
         if insurance.status == 2:
             insurance.date_of_formation = datetime.now()
             insurance.save()
-    token = get_access_token(request)
-    payload = get_jwt_payload(token)
-    user = CustomUser.objects.get(pk=payload["user_id"])
+
     serializer = InsuranceSerializer(insurance, many=False)
-    insurance.user = user
-    insurance.save()
     return Response(serializer.data)
 
 
@@ -272,6 +282,10 @@ def update_status_admin(request, insurance_id):
     """
     Модератор обновляет информацию о страховке
     """
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    user_id = payload['user_id']
+
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -287,12 +301,9 @@ def update_status_admin(request, insurance_id):
     if insurance_status in [3, 4, 5]:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    token = get_access_token(request)
-    payload = get_jwt_payload(token)
-    moderator = CustomUser.objects.get(pk=payload["user_id"])
     insurance.status = request_status
     insurance.date_complete = datetime.now()
-    insurance.moderator = moderator
+    insurance.moderator = CustomUser.objects.get(pk=user_id)
     insurance.save()
 
     serializer = InsuranceSerializer(insurance, many=False)

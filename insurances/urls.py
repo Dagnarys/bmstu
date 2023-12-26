@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/insurances/', get_insurances),  # GET
     path('api/insurances/<int:insurance_id>/', get_insurance_by_id),  # GET
     path('api/insurances/<int:insurance_id>/update/', update_insurance),  # PUT
+    path('api/insurances/<int:insurance_id>/calc_amount/', calc_amount),  # POST
     path('api/insurances/<int:insurance_id>/update_status_user/', update_status_user),  # PUT
     path('api/insurances/<int:insurance_id>/update_status_admin/', update_status_admin),  # PUT
     path('api/insurances/<int:insurance_id>/delete/', delete_insurance),  # DELETE

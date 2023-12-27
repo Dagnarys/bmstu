@@ -80,10 +80,11 @@ class Insurance(models.Model):
         (4, 'Отменён'),
         (5, 'Удалён'),
     )
+    drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
     number_insurance = models.CharField(max_length=10, default="xx123xx123", verbose_name="Номер страховки")
     start_date = models.DateField(default=datetime.now(tz=timezone.utc), verbose_name="Дата начала")
     end_date = models.DateField(default=(datetime.now(tz=timezone.utc) + timedelta(days=365)), verbose_name="Дата конца")
-    premium_amount = models.FloatField(default=0, verbose_name="Сумма")
+    premium_amount = models.IntegerField(default=0, verbose_name="Сумма")
     insurance_type = models.BooleanField(default=0, verbose_name="Тип страхования")
     status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")
     date_created = models.DateTimeField(default=datetime.now(tz=timezone.utc), verbose_name="Дата создания")
@@ -94,8 +95,6 @@ class Insurance(models.Model):
     vehicle_year = models.CharField(max_length=4, default="", verbose_name="Год выпуска")
     vehicle_vin = models.CharField(max_length=17, default="", verbose_name="VIN")
     vehicle_license_plate = models.CharField(max_length=10, default="", verbose_name="Гос. номер")
-
-    drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name="Пользователь", null=True)
     moderator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name="Модератор", related_name='Модератор', null=True)

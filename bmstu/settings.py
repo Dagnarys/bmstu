@@ -132,7 +132,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://localhost:8000",
 ]
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 
+CORS_ALLOWED_URLS = [
+    r"^/api/drivers/search$",
+    r"^/api/drivers/\d+/$",
+]
 
 CORS_ALLOW_HEADERS = [
     "accept",

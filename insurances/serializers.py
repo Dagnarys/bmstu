@@ -2,10 +2,10 @@ from rest_framework import serializers
 from .models import *
 
 
-class DriverSerializer(serializers.ModelSerializer):
+class CitySerializer(serializers.ModelSerializer):
     class Meta:
         # Модель, которую мы сериализуем
-        model = Driver
+        model = City
         # Поля, которые мы сериализуем (Все поля)
         fields = '__all__'
 
@@ -13,16 +13,28 @@ class DriverSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'name', 'email', 'is_moderator']
+        fields = ('id', 'name', 'email', 'is_moderator')
 
 
-class InsuranceSerializer(serializers.ModelSerializer):
-    drivers = DriverSerializer(read_only=True, many=True)
-    user = UserSerializer(read_only=True)
-    moderator = UserSerializer(read_only=True)
+class VacancySerializer(serializers.ModelSerializer):
+    cities = CitySerializer(read_only=True, many=True)
+    employer = UserSerializer(read_only=True, many=False)
+    moderator = UserSerializer(read_only=True, many=False)
+
     class Meta:
         # Модель, которую мы сериализуем
-        model = Insurance
+        model = Vacancy
+        # Поля, которые мы сериализуем (Все поля)
+        fields = '__all__'
+
+
+class VacanciesSerializer(serializers.ModelSerializer):
+    employer = UserSerializer(read_only=True, many=False)
+    moderator = UserSerializer(read_only=True, many=False)
+
+    class Meta:
+        # Модель, которую мы сериализуем
+        model = Vacancy
         # Поля, которые мы сериализуем (Все поля)
         fields = '__all__'
 

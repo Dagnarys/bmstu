@@ -1,37 +1,33 @@
-from datetime import datetime, timedelta
-from django.db import models
-from django.utils import timezone
-from django.contrib.auth.models import User
+from datetime import datetime
+
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.db import models
+from django.utils import timezone
 
 
-# Create your models here.
-
-
-class Driver(models.Model):
+class City(models.Model):
     STATUS_CHOICES = (
         (1, 'Действует'),
         (2, 'Удалена'),
     )
-    full_name = models.CharField(max_length=255, default="Иванов Иван Иванович", verbose_name="ФИО")
-    birth_date = models.DateField(verbose_name="Дата рождения", default="1999-01-01")
-    address = models.CharField(max_length=255, default="Москва", verbose_name="Адрес")
-    phone_number = models.CharField(max_length=17, default="+7-999-999-99-99", verbose_name="Телефон")
-    email = models.CharField(max_length=255, default="asd@gmail.com", verbose_name="Емейл")
-    driver_license_number = models.CharField(max_length=20, default="9999 999999", verbose_name="ВУ")
-    issue_date = models.DateField(verbose_name="Дата получения", default="2020-05-05")
-    expiration_date = models.DateField(verbose_name="Срок действия до", default="2050-05-05")
-    passport_number = models.CharField(max_length=11, verbose_name="Паспорт", default="9999 999999")
+
+    name = models.CharField(max_length=100, verbose_name="Название")
+    description = models.TextField(verbose_name="Описание", null=True, blank=True)
+    foundation_date = models.IntegerField(verbose_name="Дата основания", null=True, blank=True)
+    grp = models.FloatField(verbose_name="Население (млн)", null=True, blank=True)
+    climate = models.CharField(max_length=255, verbose_name="Климат", null=True, blank=True)
+    square = models.IntegerField(verbose_name="Площадь", null=True, blank=True)
+
     status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")
-    image = models.ImageField(upload_to="drivers", default="drivers/img1.png", verbose_name="Фото")
+    image = models.ImageField(upload_to="cities", default="cities/default.jpg", verbose_name="Фото", null=True, blank=True)
 
     def __str__(self):
-        return self.full_name
+        return self.name
 
     class Meta:
-        verbose_name = "Водитель"
-        verbose_name_plural = "Водители"
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
 
 
 class CustomUserManager(BaseUserManager):
@@ -72,7 +68,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "Пользователи"
 
 
-class Insurance(models.Model):
+class Vacancy(models.Model):
     STATUS_CHOICES = (
         (1, 'Введён'),
         (2, 'В работе'),
@@ -80,29 +76,31 @@ class Insurance(models.Model):
         (4, 'Отменён'),
         (5, 'Удалён'),
     )
-    drivers = models.ManyToManyField(Driver, verbose_name="Водители", null=True)
-    number_insurance = models.CharField(max_length=10, default="xx123xx123", verbose_name="Номер страховки")
-    start_date = models.DateField(default=datetime.now(tz=timezone.utc), verbose_name="Дата начала")
-    end_date = models.DateField(default=(datetime.now(tz=timezone.utc) + timedelta(days=365)), verbose_name="Дата конца")
-    premium_amount = models.IntegerField(default=0, verbose_name="Сумма")
-    insurance_type = models.BooleanField(default=0, verbose_name="Тип страхования")
+
+    BANKRUPT_CHOICES = (
+        (-1, 'Не определён'),
+        (0, 'Да'),
+        (1, 'Нет')
+    )
+
+    bankrupt = models.IntegerField(choices=BANKRUPT_CHOICES, default=-1, verbose_name="Банкрот")
+
+    name = models.CharField(max_length=255, verbose_name="Название")
+
     status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")
     date_created = models.DateTimeField(default=datetime.now(tz=timezone.utc), verbose_name="Дата создания")
-    date_of_formation = models.DateTimeField(null=True, blank=True, verbose_name="Дата формирования")
-    date_complete = models.DateTimeField(null=True, blank=True, verbose_name="Дата завершения")
-    vehicle_make = models.CharField(max_length=50, default="", verbose_name="Марка")
-    vehicle_model = models.CharField(max_length=50, default="", verbose_name="Модель")
-    vehicle_year = models.CharField(max_length=4, default="", verbose_name="Год выпуска")
-    vehicle_vin = models.CharField(max_length=17, default="", verbose_name="VIN")
-    vehicle_license_plate = models.CharField(max_length=10, default="", verbose_name="Гос. номер")
+    date_formation = models.DateTimeField(verbose_name="Дата формирования", blank=True, null=True)
+    date_complete = models.DateTimeField(verbose_name="Дата завершения", blank=True, null=True)
 
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name="Пользователь", null=True)
-    moderator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name="Модератор", related_name='Модератор', null=True)
+    employer = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING, verbose_name="Пользователь", related_name='employer', null=True)
+    moderator = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING, verbose_name="Модератор", related_name='moderator', blank=True, null=True)
+
+    cities = models.ManyToManyField(City, verbose_name="Города", null=True)
+
     def __str__(self):
-        return self.number_insurance
-
+        return self.name
 
     class Meta:
-        verbose_name = "Страховка"
-        verbose_name_plural = "Страховки"
-        ordering = ('id',)
+        verbose_name = "Вакансия"
+        verbose_name_plural = "Вакансии"
+        ordering = ('-date_formation', )

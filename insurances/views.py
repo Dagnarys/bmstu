@@ -1,12 +1,15 @@
+import requests
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.http import HttpResponse
+from django.utils.dateparse import parse_datetime
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
 from .jwt_helper import create_access_token
+from .utils import identity_user
 from .permissions import *
 from .serializers import *
 from .models import *
@@ -14,347 +17,375 @@ from .models import *
 access_token_lifetime = settings.JWT["ACCESS_TOKEN_LIFETIME"].total_seconds()
 
 
-@api_view(["GET"])
-def search_driver(request):
-    """
-    Возвращает список страховок
-    """
+def get_draft_vacancy_id(request):
+    user = identity_user(request)
 
-    def get_draft_insurance_id():
-        insurance = Insurance.objects.filter(status=1).first()
-        if insurance is None:
-            return None
-        return insurance.pk
+    if user is None:
+        return None
+
+    vacancy = Vacancy.objects.filter(employer_id=user.pk).filter(status=1).first()
+
+    if vacancy is None:
+        return None
+
+    return vacancy
+
+
+@api_view(["GET"])
+def search_city(request):
+    """
+    Возвращает список городов
+    """
 
     # Получим параметры запроса из URL
-    full_name = request.GET.get('full_name')
+    name = request.GET.get('query')
 
     # Получение данные после запроса с БД (через ORM)
-    driver = Driver.objects.filter(status=1)
+    city = City.objects.filter(status=1)
 
     # Применим фильтры на основе параметров запроса, если они предоставлены
-    if full_name:
-        driver = driver.filter(full_name__icontains=full_name)
+    if name:
+        city = city.filter(name__icontains=name)
 
-    serializer = DriverSerializer(driver, many=True)
+    serializer = CitySerializer(city, many=True)
+
+    draft_vacancy = get_draft_vacancy_id(request)
 
     resp = {
-        "draft_insurance": get_draft_insurance_id(),
-        "drivers": serializer.data
+        "draft_vacancy_id": draft_vacancy.pk if draft_vacancy else None,
+        "cities": serializer.data
     }
+
     return Response(resp)
 
 
 @api_view(['GET'])
-def get_driver_by_id(request, driver_id):
+def get_city_by_id(request, city_id):
     """
-    Возвращает информацию о конкретном водителе
+    Возвращает информацию о конкретном городе
     """
-    if not Driver.objects.filter(pk=driver_id).exists():
+    if not City.objects.filter(pk=city_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     # Получение данные после запроса с БД (через ORM)
-    driver = Driver.objects.get(pk=driver_id)
+    city = City.objects.get(pk=city_id)
 
-    serializer = DriverSerializer(driver, many=False)
+    serializer = CitySerializer(city, many=False)
     return Response(serializer.data)
 
 
 @api_view(['PUT'])
 @permission_classes([IsModerator])
-def update_driver(request, driver_id):
+def update_city(request, city_id):
     """
-    Обновляет информацию о водителе
+    Обновляет информацию о городе
     """
-    if not Driver.objects.filter(pk=driver_id).exists():
+
+    if not City.objects.filter(pk=city_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    driver = Driver.objects.get(pk=driver_id)
-    serializer = DriverSerializer(driver, data=request.data, partial=True)
+    city = City.objects.get(pk=city_id)
+    serializer = CitySerializer(city, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
 @permission_classes([IsModerator])
-def create_driver(request):
+def create_city(request):
     """
-    Добавляет новый водителя
+    Добавляет новый город
     """
-    Driver.objects.create()
+    city = City.objects.create()
 
-    drivers = Driver.objects.all()
-    serializer = DriverSerializer(drivers, many=True)
+    serializer = CitySerializer(city)
 
     return Response(serializer.data)
 
 
 @api_view(["DELETE"])
 @permission_classes([IsModerator])
-def delete_driver(request, driver_id):
+def delete_city(request, city_id):
     """
-    Удаляет водителя
+    Удаляет город
     """
-    if not Driver.objects.filter(pk=driver_id).exists():
+    if not City.objects.filter(pk=city_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    driver = Driver.objects.get(pk=driver_id)
-    driver.status = 2
-    driver.save()
+    city = City.objects.get(pk=city_id)
+    city.status = 2
+    city.save()
 
-    drivers = Driver.objects.filter(status=1)
-    serializer = DriverSerializer(drivers, many=True)
+    cities = City.objects.filter(status=1)
+    serializer = CitySerializer(cities, many=True)
 
     return Response(serializer.data)
 
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def add_driver_to_insurance(request, driver_id):
+def add_city_to_vacancy(request, city_id):
     """
-    Добавляет водителя в страховку
+    Добавляет город в вакансию
     """
-    token = get_access_token(request)
-    payload = get_jwt_payload(token)
-    user_id = payload['user_id']
-
-    if not Driver.objects.filter(pk=driver_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    driver = Driver.objects.get(pk=driver_id)
-
-    insurance = Insurance.objects.filter(status=1).last()
-
-    if insurance is None:
-        insurance = Insurance.objects.create(date_created=datetime.now(timezone.utc), date_of_formation=None,
-                                             date_complete=None)
-
-    insurance.drivers.add(driver)
-    insurance.user = CustomUser.objects.get(pk=user_id)
-    insurance.save()
-
-    serializer = InsuranceSerializer(insurance.drivers, many=True)
-
-    return Response(serializer.data)
-
-
-@api_view(["GET"])
-def get_driver_image(request, driver_id):
-    """
-    Возвращает фото водителя
-    """
-    if not Driver.objects.filter(pk=driver_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    service = Driver.objects.get(pk=driver_id)
-
-    return HttpResponse(service.image, content_type="image/png")
-
-
-@api_view(["PUT"])
-@permission_classes([IsModerator])
-def update_driver_image(request, driver_id):
-    """
-    Обновляет фото водителя
-    """
-    if not Driver.objects.filter(pk=driver_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    driver = Driver.objects.get(pk=driver_id)
-    serializer = DriverSerializer(driver, data=request.data, many=False, partial=True)
-
-    if serializer.is_valid():
-        serializer.save()
-
-    return Response(serializer.data)
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def get_insurances(request):
-    token = get_access_token(request)
-    payload = get_jwt_payload(token)
-    user = CustomUser.objects.get(pk=payload["user_id"])
-
-    status_id = int(request.GET.get("status", -1))
-    user_id = int(request.GET.get("user", -1))
-
-    date_form_after = request.GET.get("date_form_after")
-    date_form_before = request.GET.get("date_form_before")
-    insurances = Insurance.objects.exclude(status__in=[2, 5]) if user.is_moderator else Insurance.objects.filter(user_id=user.pk)
-
-    if status_id != -1:
-        insurances = insurances.filter(status=status_id)
-
-    if user_id != -1:
-        insurances = insurances.filter(user_id=user_id)
-
-    if date_form_after:
-        insurances = insurances.filter(date_of_formation__gte=datetime.strptime(date_form_after, "%Y-%m-%d").date())
-
-    if date_form_before:
-        insurances = insurances.filter(date_of_formation__lte=datetime.strptime(date_form_before, "%Y-%m-%d").date())
-
-    serializer = InsuranceSerializer(insurances, many=True)
-    return Response(serializer.data)
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def get_insurance_by_id(request, insurance_id):
-    """
-    Возвращает информацию о конкретной страховке
-    """
-    if not Insurance.objects.filter(pk=insurance_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    insurance = Insurance.objects.get(pk=insurance_id)
-    serializer = InsuranceSerializer(insurance, many=False)
-
-    return Response(serializer.data)
-
-
-@api_view(["PUT"])
-@permission_classes([IsAuthenticated])
-def update_insurance(request, insurance_id):
-    """
-    Обновляет информацию о страховке
-    """
-    if not Insurance.objects.filter(pk=insurance_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    insurance = Insurance.objects.get(pk=insurance_id)
-    serializer = InsuranceSerializer(insurance, data=request.data, many=False, partial=True)
-
-    if serializer.is_valid():
-        serializer.save()
-
-    # insurance.status = 1
-    # insurance.save()
-
-    return Response(serializer.data)
-
-@api_view(["POST"])
-@permission_classes([IsRemoteService])
-def calc_amount(request, insurance_id):
-    if not Insurance.objects.filter(pk=insurance_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    insurance = Insurance.objects.get(pk=insurance_id)
-    serializer = InsuranceSerializer(insurance, data=request.data, many=False, partial=True)
-
-    if serializer.is_valid():
-        serializer.save()
-
-    return Response(serializer.data)
-
-@api_view(["PUT"])
-@permission_classes([IsAuthenticated])
-def update_status_user(request, insurance_id):
-    """
-    Пользователь обновляет информацию о страховке
-    """
-    if not Insurance.objects.filter(pk=insurance_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    insurance = Insurance.objects.get(pk=insurance_id)
-
-    if insurance.status != 1:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    else:
-        insurance.status = 2
-        insurance.save()
-        if insurance.status == 2:
-            insurance.date_of_formation = datetime.now()
-            insurance.save()
-
-    serializer = InsuranceSerializer(insurance, many=False)
-    return Response(serializer.data)
-
-
-@api_view(["PUT"])
-@permission_classes([IsModerator])
-def update_status_admin(request, insurance_id):
-    """
-    Модератор обновляет информацию о страховке
-    """
-    token = get_access_token(request)
-    payload = get_jwt_payload(token)
-    user_id = payload['user_id']
-
-    if not Insurance.objects.filter(pk=insurance_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    request_status = request.data["status"]
-
-    if request_status in [1, 5]:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    insurance = Insurance.objects.get(pk=insurance_id)
-
-    insurance_status = insurance.status
-
-    if insurance_status in [3, 4, 5]:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    insurance.status = request_status
-    insurance.date_complete = datetime.now()
-    insurance.moderator = CustomUser.objects.get(pk=user_id)
-    insurance.save()
-
-    serializer = InsuranceSerializer(insurance, many=False)
-    return Response(serializer.data)
-
-
-@api_view(["DELETE"])
-@permission_classes([IsAuthenticated])
-def delete_insurance(request, insurance_id):
     token = get_access_token(request)
     payload = get_jwt_payload(token)
     user_id = payload["user_id"]
-    """
-    Удаляет страховку
-    """
-    if not Insurance.objects.filter(pk=insurance_id).exists():
+
+    if not City.objects.filter(pk=city_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    insurance = Insurance.objects.get(pk=insurance_id)
+    city = City.objects.get(pk=city_id)
 
-    insurance_status = insurance.status
-    if insurance_status not in [1]:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    vacancy = Vacancy.objects.filter(status=1).last()
 
-    insurance.status = 5
-    insurance.date_complete = datetime.now()
-    insurance.save()
+    if vacancy is None:
+        vacancy = Vacancy.objects.create(date_created=timezone.now(), date_formation=None, date_complete=None)
 
-    insurances = Insurance.objects.filter(user_id=user_id).exclude(status__in=[5])
-    serializer = InsuranceSerializer(insurances, many=True)
+    vacancy.name = "Вакансия №" + str(vacancy.pk)
+    vacancy.employer = CustomUser.objects.get(pk=user_id)
+    vacancy.cities.add(city)
+    vacancy.save()
+
+    serializer = VacancySerializer(vacancy)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(["GET"])
+def get_city_image(request, city_id):
+    """
+    Возвращает фото города
+    """
+    if not City.objects.filter(pk=city_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    city = City.objects.get(pk=city_id)
+
+    return HttpResponse(city.image, content_type="image/png")
+
+
+@api_view(["PUT"])
+@permission_classes([IsModerator])
+def update_city_image(request, city_id):
+    """
+    Обновляет фото города
+    """
+    if not City.objects.filter(pk=city_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    city = City.objects.get(pk=city_id)
+    serializer = CitySerializer(city, data=request.data, many=False, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_vacancies(request):
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    user = CustomUser.objects.get(pk=payload["user_id"])
+
+    status= int(request.GET.get("status", -1))
+    date_start = request.GET.get("date_start")
+    date_end = request.GET.get("date_end")
+
+    vacancies = Vacancy.objects.exclude(status__in=[1, 5])
+
+    if not user.is_moderator:
+        vacancies = vacancies.filter(employer_id=user.pk)
+
+    if status > 0:
+        vacancies = vacancies.filter(status=status)
+
+    if date_start:
+        # vacancies = vacancies.filter(date_formation__gte=datetime.strptime(date_start, "%Y-%m-%d").date())
+        vacancies = vacancies.filter(date_formation__gte=parse_datetime(date_start))
+
+    if date_end:
+        # vacancies = vacancies.filter(date_formation__lte=datetime.strptime(date_end, "%Y-%m-%d").date())
+        vacancies = vacancies.filter(date_formation__lte=parse_datetime(date_end))
+
+    serializer = VacancySerializer(vacancies, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_vacancy_by_id(request, vacancy_id):
+    """
+    Возвращает информацию о конкретной вакансии
+    """
+    if not Vacancy.objects.filter(pk=vacancy_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    vacancy = Vacancy.objects.get(pk=vacancy_id)
+    serializer = VacancySerializer(vacancy)
+
+    return Response(serializer.data)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_vacancy(request, vacancy_id):
+    """
+    Обновляет информацию о вакансии
+    """
+    if not Vacancy.objects.filter(pk=vacancy_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    vacancy = Vacancy.objects.get(pk=vacancy_id)
+    # request.data['date_formation'] = None
+    # request.data['date_complete'] = None
+    serializer = VacancySerializer(vacancy, data=request.data, many=False, partial=True)
+
+    # if 'status' in request.data and request.data['status'] == 1:
+    #     request.data['moderator'] = None
+
+    if serializer.is_valid():
+        # serializer.validated_data['moderator'] = None
+        serializer.save()
+
+    # vacancy.status = 1
+    # vacancy.save()
+
+    return Response(serializer.data)
+
+
+@api_view(["POST"])
+@permission_classes([IsRemoteService])
+def update_vacancy_bankrupt(request, vacancy_id):
+    if not Vacancy.objects.filter(pk=vacancy_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    vacancy = Vacancy.objects.get(pk=vacancy_id)
+    serializer = VacancySerializer(vacancy, data=request.data, many=False, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
+
+
+def calculate_vacancy_bankrupt(vacancy_id):
+    data = {
+        "vacancy_id": vacancy_id
+    }
+
+    requests.post("http://127.0.0.1:8080/calc_bankrupt/", json=data, timeout=3)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_status_user(request, vacancy_id):
+    """
+    Пользователь обновляет информацию о вакансии
+    """
+    if not Vacancy.objects.filter(pk=vacancy_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    vacancy = Vacancy.objects.get(pk=vacancy_id)
+
+    if vacancy.status != 1:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    else:
+        vacancy.status = 2
+        vacancy.save()
+        if vacancy.status == 2:
+            vacancy.date_formation = datetime.now()
+            vacancy.save()
+
+    calculate_vacancy_bankrupt(vacancy_id)
+
+    serializer = VacancySerializer(vacancy)
+
+    return Response(serializer.data)
+
+
+@api_view(["PUT"])
+@permission_classes([IsModerator])
+def update_status_admin(request, vacancy_id):
+    """
+    Модератор обновляет информацию о вакансии
+    """
+    token = get_access_token(request)
+    payload = get_jwt_payload(token)
+    user_id = payload["user_id"]
+
+    if not Vacancy.objects.filter(pk=vacancy_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    request_status = int(request.data["status"])
+    if request_status not in [3, 4]:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    vacancy = Vacancy.objects.get(pk=vacancy_id)
+
+    if vacancy.status != 2:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    # vacancy.status = request_status
+    # vacancy.date_complete = datetime.now()
+    # vacancy.moderator = CustomUser.objects.get(pk=user_id)
+    # vacancy.save()
+
+    if request_status == 4:
+        vacancy.date_complete = None
+    else:
+        vacancy.date_complete = datetime.now()
+
+    vacancy.status = request_status
+    vacancy.moderator = CustomUser.objects.get(pk=user_id)
+    vacancy.save()
+
+    serializer = VacancySerializer(vacancy, many=False)
+    return Response(serializer.data)
+
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def delete_driver_from_insurance(request, insurance_id, driver_id):
+def delete_vacancy(request, vacancy_id):
     """
-    Удаляет водителя из страховки
+    Удаляет вакансию
     """
-    if not Insurance.objects.filter(pk=insurance_id).exists():
+    if not Vacancy.objects.filter(pk=vacancy_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not Driver.objects.filter(pk=driver_id).exists():
+    vacancy = Vacancy.objects.get(pk=vacancy_id)
+
+    if vacancy.status != 1:
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    vacancy.status = 5
+    vacancy.save()
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_city_from_vacancy(request, vacancy_id, city_id):
+    """
+    Удаляет город из вакансии
+    """
+    if not Vacancy.objects.filter(pk=vacancy_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    insurance = Insurance.objects.get(pk=insurance_id)
-    insurance.drivers.remove(Driver.objects.get(pk=driver_id))
-    insurance.save()
+    if not City.objects.filter(pk=city_id).exists():
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    serializer = DriverSerializer(insurance.drivers, many=True)
+    vacancy = Vacancy.objects.get(pk=vacancy_id)
+    vacancy.cities.remove(City.objects.get(pk=city_id))
+    vacancy.save()
+
+    serializer = CitySerializer(vacancy.cities, many=True)
 
     return Response(serializer.data)
 
@@ -391,29 +422,22 @@ def login(request):
 
 @api_view(["POST"])
 def register(request):
-    serializer = UserLoginSerializer(data=request.data)
+    serializer = UserRegisterSerializer(data=request.data)
 
     if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_409_CONFLICT)
 
-    # Check credentials
-    user = authenticate(**serializer.data)
-    if user is None:
-        message = {"message": "invalid credentials"}
-        return Response(message, status=status.HTTP_401_UNAUTHORIZED)
+    user = serializer.save()
 
     access_token = create_access_token(user.id)
 
-    user_data = {
-        "user_id": user.id,
-        "name": user.name,
-        "email": user.email,
-        "is_moderator": user.is_moderator,
+    message = {
+        'message': 'User registered successfully',
+        'user_id': user.id,
         "access_token": access_token
     }
-    cache.set(access_token, user_data, access_token_lifetime)
 
-    response = Response(user_data, status=status.HTTP_201_CREATED)
+    response = Response(message, status=status.HTTP_201_CREATED)
 
     response.set_cookie('access_token', access_token, httponly=False, expires=access_token_lifetime)
 
@@ -421,21 +445,11 @@ def register(request):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def check(request):
-    token = get_access_token(request)
+    user = identity_user(request)
 
-    if token is None:
-        message = {"message": "Token is not found"}
-        return Response(message, status=status.HTTP_401_UNAUTHORIZED)
-
-    if token in cache:
-        message = {"message": "Token in blacklist"}
-        return Response(message, status=status.HTTP_401_UNAUTHORIZED)
-
-    payload = get_jwt_payload(token)
-    user_id = payload["user_id"]
-
-    user = CustomUser.objects.get(pk=user_id)
+    user = CustomUser.objects.get(pk=user.pk)
     serializer = UserSerializer(user, many=False)
 
     return Response(serializer.data, status=status.HTTP_200_OK)

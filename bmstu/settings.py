@@ -22,7 +22,6 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-APP_NAME = 'insurances'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    APP_NAME,
+    'vacancies',
 
     'corsheaders',
     'drf_yasg',
@@ -125,47 +124,27 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    # FRONTEND
-    "http://127.0.0.1:5173",
     "http://localhost:5173",
-    # BACKEND
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
-]
-CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
-
-CORS_ALLOWED_URLS = [
-    r"^/api/drivers/search$",
-    r"^/api/drivers/\d+/$",
-]
-
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-    "Authorization",
-    "Content-Type",
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOW_HEADERS = [
+    "Authorization",
+    "Content-Type",
+]
+
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
+
+AUTH_USER_MODEL = 'vacancies.CustomUser'
 
 JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "ALGORITHM": "HS256",
     "SIGNING_KEY": "MY_SIGNING_KEY_123",
 }
-
-AUTH_USER_MODEL = APP_NAME + '.CustomUser'
 
 CACHES = {
     "default": {
@@ -176,6 +155,7 @@ CACHES = {
         },
     }
 }
+
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

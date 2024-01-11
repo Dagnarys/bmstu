@@ -1,5 +1,5 @@
-from vacancies.jwt_helper import get_access_token, get_jwt_payload
-from vacancies.models import CustomUser
+from insurances.jwt_helper import get_access_token, get_jwt_payload
+from insurances.models import CustomUser
 
 
 def identity_user(request):

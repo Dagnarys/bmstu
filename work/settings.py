@@ -1,27 +1,22 @@
-
 from datetime import timedelta
 from pathlib import Path
-import os
-
-from django.core.cache.backends.redis import RedisCache
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)ja@371whg2h@6=syiq#&zlu#k8b8lu8ccy)+80pj43%ooa#6n'
+SECRET_KEY = 'django-insecure-1c@qpyzt8)3@_b7pxvwlg=a%g3oyosy!zj&1fl^dt=z3k-iw!7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -30,9 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'insurances',
     'rest_framework',
-    'vacancies',
-
     'corsheaders',
     'drf_yasg',
 ]
@@ -40,16 +34,15 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
-ROOT_URLCONF = 'bmstu.urls'
+ROOT_URLCONF = 'work.urls'
 
 TEMPLATES = [
     {
@@ -67,22 +60,22 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'bmstu.wsgi.application'
+WSGI_APPLICATION = 'work.wsgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "driver_insurance",
-        'USER': "postgres",
-        'PASSWORD': "postgres",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "insurances",
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
         'HOST': 'localhost',
-
-
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -102,6 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -112,6 +106,7 @@ TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 
 USE_TZ = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -138,7 +133,7 @@ CORS_ALLOW_HEADERS = [
 REDIS_HOST = 'localhost'
 REDIS_PORT = '6379'
 
-AUTH_USER_MODEL = 'vacancies.CustomUser'
+AUTH_USER_MODEL = 'insurances.CustomUser'
 
 JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
@@ -157,10 +152,8 @@ CACHES = {
 }
 
 
-
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = 'images'
-AWS_ACCESS_KEY_ID = '0RMHrKrfKv57FZHEvDVf'
-AWS_SECRET_ACCESS_KEY = 'B25dN3iIAdrT9jIe98iekAPNSrORsaVEEGNkllVa'
+AWS_ACCESS_KEY_ID = 'jZ8cjBYCSiehHisTx7jy'
+AWS_SECRET_ACCESS_KEY = '3fQYUCdIgr2hhPDua3Ki0ldh6EuDGa0qtaggCypQ'
 AWS_S3_ENDPOINT_URL = 'http://127.0.0.1:9000'
-

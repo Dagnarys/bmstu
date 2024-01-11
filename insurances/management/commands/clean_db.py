@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
-from vacancies.models import *
+from insurances.models import *
 
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        City.objects.all().delete()
-        Vacancy.objects.all().delete()
+        Driver.objects.all().delete()
+        Insurance.objects.all().delete()
         CustomUser.objects.all().delete()

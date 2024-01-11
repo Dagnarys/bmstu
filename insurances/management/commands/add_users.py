@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from vacancies.models import CustomUser
+from insurances.models import CustomUser
 
 
 def add_users():
@@ -22,3 +22,4 @@ def add_users():
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         add_users()
+

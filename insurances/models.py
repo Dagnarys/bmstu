@@ -6,21 +6,21 @@ from django.db import models
 from django.utils import timezone
 
 
-class City(models.Model):
+class Driver(models.Model):
     STATUS_CHOICES = (
         (1, 'Действует'),
         (2, 'Удалена'),
     )
 
-    name = models.CharField(max_length=100, verbose_name="Название")
-    description = models.TextField(verbose_name="Описание", null=True, blank=True)
-    foundation_date = models.IntegerField(verbose_name="Дата основания", null=True, blank=True)
-    grp = models.FloatField(verbose_name="Население (млн)", null=True, blank=True)
-    climate = models.CharField(max_length=255, verbose_name="Климат", null=True, blank=True)
-    square = models.IntegerField(verbose_name="Площадь", null=True, blank=True)
+    name = models.CharField(max_length=100, verbose_name="ФИО")
+    passport_number = models.TextField(verbose_name="Описание", null=True, blank=True)
+    birth_date = models.DateField(verbose_name="Дата рождения", default="1999-01-01")
+    address = models.CharField(max_length=255, default="Москва", verbose_name="Адрес")
+    phone_number = models.CharField(max_length=17, default="+7-999-999-99-99", verbose_name="Телефон")
+    email = models.CharField(max_length=255, default="asd@gmail.com", verbose_name="Емейл")
 
     status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")
-    image = models.ImageField(upload_to="cities", default="cities/default.jpg", verbose_name="Фото", null=True, blank=True)
+    image = models.ImageField(upload_to="drivers", default="drivers/MockImage.png", verbose_name="Фото", null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -68,7 +68,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "Пользователи"
 
 
-class Vacancy(models.Model):
+class Insurance(models.Model):
     STATUS_CHOICES = (
         (1, 'Введён'),
         (2, 'В работе'),
@@ -77,13 +77,7 @@ class Vacancy(models.Model):
         (5, 'Удалён'),
     )
 
-    BANKRUPT_CHOICES = (
-        (-1, 'Не определён'),
-        (0, 'Да'),
-        (1, 'Нет')
-    )
-
-    bankrupt = models.IntegerField(choices=BANKRUPT_CHOICES, default=-1, verbose_name="Банкрот")
+    premium_amount = models.IntegerField(default=-1, verbose_name="Банкрот")
 
     name = models.CharField(max_length=255, verbose_name="Название")
 
@@ -95,12 +89,12 @@ class Vacancy(models.Model):
     employer = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING, verbose_name="Пользователь", related_name='employer', null=True)
     moderator = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING, verbose_name="Модератор", related_name='moderator', blank=True, null=True)
 
-    cities = models.ManyToManyField(City, verbose_name="Города", null=True)
+    drivers = models.ManyToManyField(Driver, verbose_name="Города", null=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "Вакансия"
-        verbose_name_plural = "Вакансии"
+        verbose_name = "Страховка"
+        verbose_name_plural = "Страховки"
         ordering = ('-date_formation', )

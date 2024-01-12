@@ -93,7 +93,7 @@ def add_insurances():
 
             insurance.date_created = insurance.date_formation - random_timedelta()
             insurance.moderator = random.choice(moderators)
-            insurance.premium_amount = random.randint(0, 1)
+            insurance.premium_amount = 5000+random.randint(0, 10000)
         else:
             insurance.date_formation = random_date()
             insurance.date_created = insurance.date_formation - random_timedelta()

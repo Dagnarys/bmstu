@@ -120,6 +120,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -157,3 +158,4 @@ AWS_STORAGE_BUCKET_NAME = 'images'
 AWS_ACCESS_KEY_ID = 'jZ8cjBYCSiehHisTx7jy'
 AWS_SECRET_ACCESS_KEY = '3fQYUCdIgr2hhPDua3Ki0ldh6EuDGa0qtaggCypQ'
 AWS_S3_ENDPOINT_URL = 'http://127.0.0.1:9000'
+

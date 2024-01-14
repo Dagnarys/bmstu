@@ -148,12 +148,14 @@ def add_driver_to_insurance(request, driver_id):
 
     insurance.name = "Страховка №" + str(insurance.pk)
     insurance.employer = CustomUser.objects.get(pk=user_id)
+
+    if insurance.drivers.contains(driver):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
     insurance.drivers.add(driver)
     insurance.save()
 
-    serializer = InsuranceSerializer(insurance)
-
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -411,9 +413,13 @@ def delete_driver_from_insurance(request, insurance_id, driver_id):
     insurance.drivers.remove(Driver.objects.get(pk=driver_id))
     insurance.save()
 
+    if insurance.drivers.count() == 0:
+        insurance.delete()
+        return Response(status=status.HTTP_201_CREATED)
+
     serializer = DriverSerializer(insurance.drivers, many=True)
 
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @swagger_auto_schema(method='post', request_body=UserLoginSerializer)

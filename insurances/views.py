@@ -308,7 +308,7 @@ def calc_amount(insurance_id):
         "insurance_id": insurance_id
     }
     print(insurance_id)
-    requests.post("http://127.0.0.1:8080/update_insurance_amount/", json=data, timeout=3)
+    requests.post("http://127.0.0.1:8080/calc_amount/", json=data, timeout=3)
 
 
 @api_view(["PUT"])

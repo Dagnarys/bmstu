@@ -143,13 +143,18 @@ def add_driver_to_insurance(request, driver_id):
 
     insurance = Insurance.objects.filter(status=1).last()
 
+    # Increment insurance ID if the insurance is already occupied
+    while insurance is not None and insurance.drivers.filter(pk=driver_id).exists():
+        new_insurance_id = insurance.pk + 1
+        insurance = Insurance.objects.filter(pk=new_insurance_id, status=1).last()
+
     if insurance is None:
         insurance = Insurance.objects.create(date_created=timezone.now(), date_formation=None, date_complete=None)
 
     insurance.name = "Страховка №" + str(insurance.pk)
     insurance.employer = CustomUser.objects.get(pk=user_id)
 
-    if insurance.drivers.contains(driver):
+    if insurance.drivers.filter(pk=driver_id).exists():
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     insurance.drivers.add(driver)

@@ -201,7 +201,7 @@ def get_insurances(request):
     payload = get_jwt_payload(token)
     user = CustomUser.objects.get(pk=payload["user_id"])
 
-    status= int(request.GET.get("status", -1))
+    status = int(request.GET.get("status", -1))
     date_start = request.GET.get("date_start")
     date_end = request.GET.get("date_end")
 
@@ -254,13 +254,13 @@ def update_insurance(request, insurance_id):
     serializer = InsuranceSerializer(insurance, data=request.data, many=False, partial=True)
 
     if serializer.is_valid():
-
         serializer.save()
 
     return Response(serializer.data)
+
+
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-
 def update_user(request):
     """
     Обновляет информацию о пользователе
@@ -291,21 +291,20 @@ def update_user(request):
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
-@api_view(["POST"])
+@api_view(["PUT"])
 @permission_classes([IsRemoteService])
 def update_insurance_amount(request, insurance_id):
     if not Insurance.objects.filter(pk=insurance_id).exists():
         return Response(status=status.HTTP_404_NOT_FOUND)
-
+    print(request.data)
     insurance = Insurance.objects.get(pk=insurance_id)
-    serializer = InsuranceSerializer(insurance, data=request.data, many=False, partial=True)
-    print(insurance.premium_amount)
-    if serializer.is_valid():
-        serializer.save()
+    premium_amount = request.data.get('premium_amount')
 
-    return Response(serializer.data)
+    print(insurance.premium_amount)
+    insurance.premium_amount = premium_amount
+    insurance.save()
+
+    return Response(status=status.HTTP_200_OK)
 
 
 def calc_amount(insurance_id):
@@ -327,14 +326,10 @@ def update_status_user(request, insurance_id):
 
     insurance = Insurance.objects.get(pk=insurance_id)
 
-    if insurance.status != 1:
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    else:
-        insurance.status = 2
-        insurance.save()
-        if insurance.status == 2:
-            insurance.date_formation = datetime.now()
-            insurance.save()
+    insurance.status = 2
+
+    insurance.date_formation = datetime.now()
+    insurance.save()
 
     calc_amount(insurance_id)
 
@@ -381,6 +376,7 @@ def update_status_admin(request, insurance_id):
 
     serializer = InsuranceSerializer(insurance, many=False)
     return Response(serializer.data)
+
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
